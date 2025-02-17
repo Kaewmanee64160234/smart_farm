@@ -3,8 +3,12 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-
+const bcrypt = require("bcryptjs");
 const app = express();
+// local storage
+const LocalStorage = require('node-localstorage').LocalStorage;
+localStorage = new LocalStorage('./scratch');
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -26,15 +30,69 @@ db.connect(err => {
     console.log("Connected to MySQL Database");
 });
 
-// Redirect root to login page
-app.get("/", (req, res) => {
-    res.redirect("/login");
-});
-
 // Serve login page
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "login.html"));
 });
+
+// Serve registration page
+app.get("/register", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "register.html"));
+});
+
+// Redirect root to login page
+app.get("/", (req, res) => {
+    res.redirect("/login");
+});
+app.get("/home", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "home.html"));
+});
+
+// API for user registration
+app.post("/api/register", async (req, res) => {
+    const { username, password_hash, role } = req.body;
+    console.log(req.body);
+    
+    if (!username || !password_hash || !role) {
+        
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password_hash, 10);
+
+    db.query(
+        "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+        [username, hashedPassword, role],
+        (err) => {
+            if (err) return res.status(500).json(err);
+            res.json({ message: "User registered successfully" });
+        }
+    );
+});
+// api login
+app.post("/api/login", (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    db.query("SELECT * FROM users WHERE username = ?", [username], async (err, results) => {
+        if (err) return res.status(500).json(err);
+        if (results.length === 0) return res.status(401).json({ error: "Invalid credentials" });
+
+        const user = results[0];
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+
+        if (!isMatch) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+
+        res.json({ message: "Login successful", user });
+    });
+});
+
 
 // Define API Routes
 const createRouter = (tableName) => {
