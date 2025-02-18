@@ -49,7 +49,9 @@ app.get("/plant_area", (req, res) =>
 app.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "register.html"));
 });
-
+app.get("/plantation-dashboard", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "plantation-dashboard.html"));
+});
 // Redirect root to login page
 app.get("/", (req, res) => {
     res.redirect("/login");
@@ -61,6 +63,13 @@ app.get("/home", (req, res) => {
 app.get("/plant_management", (req, res) =>
     res.sendFile(path.join(__dirname, "views", "plant_management.html"))
 );
+
+
+// dashboard
+app.get("/dashboard", (req, res) =>
+    res.sendFile(path.join(__dirname, "views", "dashboard.html"))
+);
+
 
 // API for user registration
 app.post("/api/register", async (req, res) => {
@@ -107,6 +116,123 @@ app.post("/api/login", (req, res) => {
     });
 });
 
+app.get("/api/sensor-trends", (req, res) => {
+    const sql = `
+    SELECT 
+        S.timestamp, 
+        P.plantation_area, 
+        S.temperature, 
+        S.humidity, 
+        S.soil_moisture
+    FROM SensorData S
+    JOIN PlantationArea P ON S.plantation_id = P.id
+    ORDER BY S.timestamp DESC
+    LIMIT 50;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
+// ✅ API: Get Average Sensor Readings per Plantation (Bar Chart)
+app.get("/api/average-sensor", (req, res) => {
+    const sql = `
+    SELECT 
+        P.plantation_area, 
+        ROUND(AVG(S.temperature), 2) AS avg_temperature, 
+        ROUND(AVG(S.humidity), 2) AS avg_humidity, 
+        ROUND(AVG(S.soil_moisture), 2) AS avg_soil_moisture
+    FROM SensorData S
+    JOIN PlantationArea P ON S.plantation_id = P.id
+    GROUP BY P.plantation_area
+    ORDER BY avg_soil_moisture DESC;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
+// ✅ API: Get Alert Distribution (Pie Chart)
+app.get("/api/alert-distribution", (req, res) => {
+    const sql = `
+    SELECT 
+        alert_type, 
+        COUNT(id) AS alert_count
+    FROM Alerts
+    GROUP BY alert_type
+    ORDER BY alert_count DESC;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
+// ✅ API: Get Weather & Sensor Data Correlation (Scatter Plot)
+app.get("/api/weather-sensor", (req, res) => {
+    const sql = `
+    SELECT 
+        W.timestamp, 
+        P.plantation_area, 
+        W.temperature AS weather_temp, 
+        W.rainfall AS weather_rainfall, 
+        S.soil_moisture
+    FROM Weather W
+    RIGHT JOIN SensorData S ON W.plantation_id = S.plantation_id
+    JOIN PlantationArea P ON S.plantation_id = P.id
+    WHERE W.timestamp >= NOW() - INTERVAL 7 DAY
+    ORDER BY W.timestamp DESC;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
+// ✅ API: Get Plantation Locations for Map
+app.get("/api/plantation-map", (req, res) => {
+    const sql = `
+    SELECT id, plantation_area, soil_type, water_source_type 
+    FROM PlantationArea;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+app.get("/api/sensordata", (req, res) => {
+    const { plantation_id, date } = req.query;
+
+    // Validate query parameters
+    if (!plantation_id || !date) {
+        return res.status(400).json({ error: "plantation_id and date are required." });
+    }
+
+    const query = `
+        SELECT timestamp, temperature, humidity, soil_moisture, rainfall, wind_speed
+        FROM SensorData 
+        WHERE plantation_id = ? 
+        AND DATE(timestamp) = ?
+        ORDER BY timestamp DESC
+    `;
+
+    db.query(query, [plantation_id, date], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        res.json(results);
+    });
+
+    console.log(
+        `Executing SQL Query: 
+        SELECT timestamp, temperature, humidity, soil_moisture, rainfall, wind_speed
+        FROM SensorData 
+        WHERE plantation_id = ${db.escape(plantation_id)} 
+        AND DATE(timestamp) = ${db.escape(date)}
+        ORDER BY timestamp DESC`
+    );
+});
 
 // Define API Routes
 const createRouter = (tableName) => {
@@ -168,6 +294,46 @@ const createRouter = (tableName) => {
     
     return router;
 };
+
+app.get("/api/sensor-data", (req, res) => {
+    const query = `
+        SELECT 
+            P.plantation_area, 
+            ROUND(AVG(S.temperature), 2) AS avg_temperature, 
+            ROUND(AVG(S.humidity), 2) AS avg_humidity, 
+            ROUND(AVG(S.soil_moisture), 2) AS avg_soil_moisture
+        FROM SensorData S
+        JOIN PlantationArea P ON S.plantation_id = P.id
+        GROUP BY P.plantation_area
+        ORDER BY avg_soil_moisture DESC
+    `;
+    db.query(query, (err, results) => {
+        if (err) res.status(500).json(err);
+        else res.json(results);
+    });
+});
+app.get("/api/alerts", (req, res) => {
+    const query = `
+        SELECT 
+            A.alert_type, 
+            COUNT(A.id) AS alert_count
+        FROM Alerts A
+        GROUP BY A.alert_type
+        ORDER BY alert_count DESC
+    `;
+    db.query(query, (err, results) => {
+        if (err) res.status(500).json(err);
+        else res.json(results);
+    });
+});
+app.get("/api/plantation-areas", (req, res) => {
+    const query = "SELECT id, plantation_area, latitude, longitude, soil_type, water_source_type FROM PlantationArea";
+    db.query(query, (err, results) => {
+        if (err) res.status(500).json(err);
+        else res.json(results);
+    });
+});
+
 
 // Register Routes
 app.use("/api/weather", createRouter("weather"));

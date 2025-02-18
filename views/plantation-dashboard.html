@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantation Data Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/home">Smart Farm</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav
+
+                    ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/plant_area">Plantation Area</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/plant_management">Plant Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/geostatic">Geospatial</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center">Plantation Sensor & Weather Dashboard</h2>
+
+        <!-- Date Picker -->
+        <div class="mb-3">
+            <label for="selectedDate" class="form-label">Select Date:</label>
+            <input type="date" id="selectedDate" class="form-control" onchange="fetchSensorData()">
+        </div>
+
+        <div class="row">
+            <!-- Line Chart: Sensor Trends -->
+            <div class="col-md-6">
+                <div id="sensorChartContainer">
+                    <canvas id="sensorTrendsChart"></canvas>
+                </div>
+                <p id="sensorNoData" class="text-center text-muted mt-3" style="display: none;">No sensor data available for the selected date.</p>
+            </div>
+
+            <!-- Bar Chart: Average Sensor Data -->
+            <div class="col-md-6">
+                <div id="weatherChartContainer">
+                    <canvas id="weatherDataChart"></canvas>
+                </div>
+                <p id="weatherNoData" class="text-center text-muted mt-3" style="display: none;">No weather data available for the selected date.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let plantationId;
+        let sensorChartInstance = null;
+        let weatherChartInstance = null;
+
+        function getPlantationIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get("id");
+        }
+
+        async function fetchSensorData() {
+            plantationId = getPlantationIdFromURL();
+            const selectedDate = document.getElementById("selectedDate").value || new Date().toISOString().split("T")[0];
+
+            try {
+                const res = await fetch(`/api/sensordata?plantation_id=${plantationId}&date=${selectedDate}`);
+                const data = await res.json();
+
+                if (data.length === 0) {
+                    console.warn("No data found for the selected date.");
+                    resetCharts(true);
+                    return;
+                }
+
+                const labels = data.map(entry => entry.timestamp);
+                const temperatures = data.map(entry => entry.temperature);
+                const humidities = data.map(entry => entry.humidity);
+                const soilMoistures = data.map(entry => entry.soil_moisture);
+                const rainfall = data.map(entry => entry.rainfall);
+                const windSpeed = data.map(entry => entry.wind_speed);
+
+                resetCharts(false);
+                updateSensorChart(labels, temperatures, humidities, soilMoistures);
+                updateWeatherChart(labels, rainfall, windSpeed);
+            } catch (error) {
+                console.error("Error fetching sensor data:", error);
+                resetCharts(true);
+            }
+        }
+
+        function resetCharts(noData) {
+            // Destroy existing chart instances if they exist
+            if (sensorChartInstance) {
+                sensorChartInstance.destroy();
+                sensorChartInstance = null;
+            }
+            if (weatherChartInstance) {
+                weatherChartInstance.destroy();
+                weatherChartInstance = null;
+            }
+
+            // Show/Hide No Data Messages
+            document.getElementById("sensorChartContainer").style.display = noData ? "none" : "block";
+            document.getElementById("sensorNoData").style.display = noData ? "block" : "none";
+            
+            document.getElementById("weatherChartContainer").style.display = noData ? "none" : "block";
+            document.getElementById("weatherNoData").style.display = noData ? "block" : "none";
+        }
+
+        function updateSensorChart(labels, temperatures, humidities, soilMoistures) {
+            if (sensorChartInstance) sensorChartInstance.destroy();
+
+            sensorChartInstance = new Chart(document.getElementById("sensorTrendsChart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Temperature (°C)", data: temperatures, borderColor: "red", fill: false },
+                        { label: "Humidity (%)", data: humidities, borderColor: "blue", fill: false },
+                        { label: "Soil Moisture (%)", data: soilMoistures, borderColor: "green", fill: false }
+                    ]
+                }
+            });
+        }
+
+        function updateWeatherChart(labels, rainfall, windSpeed) {
+            if (weatherChartInstance) weatherChartInstance.destroy();
+
+            weatherChartInstance = new Chart(document.getElementById("weatherDataChart"), {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Rainfall (mm)", data: rainfall, backgroundColor: "cyan" },
+                        { label: "Wind Speed (km/h)", data: windSpeed, backgroundColor: "orange" }
+                    ]
+                }
+            });
+        }
+
+        fetchSensorData();
+    </script>
+</body>
+</html>
