@@ -108,6 +108,9 @@
                 <th>Image</th>
                 <th>Plantation Area</th>
                 <th>Soil Type</th>
+                <th>Urban Area Proximity</th>
+                <th>Water Source Type</th>
+                <th>Crop Density</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -152,6 +155,12 @@
                   class="form-control mb-2"
                   placeholder="Soil Type"
                 />
+                <label for="urbanAreaProximity" class="form-label">Urban Area Proximity</label>
+                <input type="text" id="urbanAreaProximity" class="form-control mb-2" placeholder="Urban Area Proximity" />
+                <label for="waterSourceType" class="form-label">Water Source Type</label>
+                <input type="text" id="waterSourceType" class="form-control mb-2" placeholder="Water Source Type" />
+                <label for="cropDensity" class="form-label">Crop Density</label>
+                <input type="text" id="cropDensity" class="form-control mb-2" placeholder="Crop Density" />
               </div>
               <div class="modal-footer">
                 <button
@@ -217,6 +226,12 @@
                   class="form-control mb-2"
                   placeholder="Soil Type"
                 />
+                <label for="editUrbanAreaProximity" class="form-label">Urban Area Proximity</label>
+                <input type="text" id="editUrbanAreaProximity" class="form-control mb-2" placeholder="Urban Area Proximity" />
+                <label for="editWaterSourceType" class="form-label">Water Source Type</label>
+                <input type="text" id="editWaterSourceType" class="form-control mb-2" placeholder="Water Source Type" />
+                <label for="editCropDensity" class="form-label">Crop Density</label>
+                <input type="text" id="editCropDensity" class="form-control mb-2" placeholder="Crop Density" />
               </div>
               <div class="modal-footer">
                 <button
@@ -326,6 +341,9 @@
                             <td><img src="${imageSrc}" alt="Image" class="image-preview"></td>
                             <td>${plantation.plantation_area}</td>
                             <td>${plantation.soil_type}</td>
+                            <td>${plantation.urban_area_proximity}</td>
+                            <td>${plantation.water_source_type}</td>
+                            <td>${plantation.crop_density}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); editPlantation(${
                                   plantation.id
@@ -333,7 +351,7 @@
                 plantation.soil_type
               }', '${
                 plantation.image_link || ""
-              }')" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+              }', '${plantation.urban_area_proximity}', '${plantation.water_source_type}', '${plantation.crop_density}')" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
                                 <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); confirmDelete(${
                                   plantation.id
                                 })" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
@@ -346,13 +364,16 @@
             window.location.href = `/plantation-dashboard?id=${plantationId}`;
           }
 
-          function editPlantation(id, name, soil, image) {
+          function editPlantation(id, name, soil, image, urban_area_proximity, water_source_type, crop_density) {
             document.getElementById("editId").value = id;
             document.getElementById("editPlantationName").value = name;
             document.getElementById("editSoilType").value = soil;
             document.getElementById("editImageLink").value = image;
             document.getElementById("editImagePreview").src =
               image || "/assets/noimage.jpg";
+            document.getElementById("editUrbanAreaProximity").value = urban_area_proximity;
+            document.getElementById("editWaterSourceType").value = water_source_type;
+            document.getElementById("editCropDensity").value = crop_density;
           }
 
           function confirmDelete(id) {
@@ -367,8 +388,11 @@
                 document.getElementById("plantationName").value;
               const soil_type = document.getElementById("soilType").value;
               const image_link = document.getElementById("imageLink").value;
+              const urban_area_proximity = document.getElementById("urbanAreaProximity").value;
+              const water_source_type = document.getElementById("waterSourceType").value;
+              const crop_density = document.getElementById("cropDensity").value;
 
-              if (!validateInput(plantation_area, soil_type, image_link))
+              if (!validateInput(plantation_area, soil_type, image_link, urban_area_proximity, water_source_type, crop_density))
                 return;
 
               const res = await fetch("/api/plantationarea", {
@@ -378,6 +402,9 @@
                   plantation_area,
                   soil_type,
                   image_link,
+                  urban_area_proximity,
+                  water_source_type,
+                  crop_density,
                 }),
               });
 
@@ -386,6 +413,9 @@
                 document.getElementById("plantationName").value = "";
                 document.getElementById("soilType").value = "";
                 document.getElementById("imageLink").value = "";
+                document.getElementById("urbanAreaProximity").value = "";
+                document.getElementById("waterSourceType").value = "";
+                document.getElementById("cropDensity").value = "";
                 $("#addModal").modal("hide");
               }
             });
@@ -399,8 +429,11 @@
                 document.getElementById("editPlantationName").value;
               const soil_type = document.getElementById("editSoilType").value;
               const image_link = document.getElementById("editImageLink").value;
+              const urban_area_proximity = document.getElementById("editUrbanAreaProximity").value;
+              const water_source_type = document.getElementById("editWaterSourceType").value;
+              const crop_density = document.getElementById("editCropDensity").value;
 
-              if (!validateInput(plantation_area, soil_type, image_link))
+              if (!validateInput(plantation_area, soil_type, image_link, urban_area_proximity, water_source_type, crop_density))
                 return;
 
               const res = await fetch(`/api/plantationarea/${id}`, {
@@ -410,6 +443,9 @@
                   plantation_area,
                   soil_type,
                   image_link,
+                  urban_area_proximity,
+                  water_source_type,
+                  crop_density,
                 }),
               });
 
@@ -434,8 +470,8 @@
               }
             });
 
-          function validateInput(plantation_area, soil_type, image_link) {
-            if (!plantation_area || !soil_type || !image_link) {
+          function validateInput(plantation_area, soil_type, image_link, urban_area_proximity, water_source_type, crop_density) {
+            if (!plantation_area || !soil_type || !image_link || !urban_area_proximity || !water_source_type || !crop_density) {
               alert("All fields are required!");
               return false;
             }

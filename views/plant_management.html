@@ -72,6 +72,9 @@
                     <th>Plant Name</th>
                     <th>Season</th>
                     <th>Growth Stage</th>
+                    <th>Pest Pressure</th>
+                    <th>Fertilizer Usage</th>
+                    <th>Plantation ID</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -90,8 +93,8 @@
                 <div class="modal-body">
                     <!-- textfile image -->
                      <!-- lable -->
-                        <label for="plantImage" class="form-label">Plant Image</label>
-                    <input type="file" id="plantImage" class="form-control mb-2" placeholder="Plant Image">
+                        <label for="plantImage" class="form-label">Plant Image Link</label>
+                    <input type="text" id="plantImage" class="form-control mb-2" placeholder="Plant Image Link">
                     <!-- textfile image -->
                      <label for="plantName" class="form-label">Plant Name</label>
                     <input type="text" id="plantName" class="form-control mb-2" placeholder="Plant Name">
@@ -99,6 +102,12 @@
                     <input type="text" id="plantSeason" class="form-control mb-2" placeholder="Season">
                     <label for="growthStage" class="form-label">Growth Stage</label>
                     <input type="text" id="growthStage" class="form-control" placeholder="Growth Stage">
+                    <label for="pestPressure" class="form-label">Pest Pressure</label>
+                    <input type="text" id="pestPressure" class="form-control mb-2" placeholder="Pest Pressure" />
+                    <label for="fertilizerUsage" class="form-label">Fertilizer Usage</label>
+                    <input type="text" id="fertilizerUsage" class="form-control mb-2" placeholder="Fertilizer Usage" />
+                    <label for="plantationId" class="form-label">Plantation ID</label>
+                    <select id="plantationId" class="form-control mb-2"></select>
                 </div>
 <body class="bg-light">
    
@@ -127,14 +136,20 @@
                 />
                     <input type="hidden" id="editPlantId">
                     <!-- image path -->
-                    <label for="editPlantImage" class="form-label">Plant Image</label>
-                    <input type="text" id="editPlantImage" class="form-control mb-2">
+                    <label for="editPlantImage" class="form-label">Plant Image Link</label>
+                    <input type="text" id="editPlantImage" class="form-control mb-2" placeholder="Plant Image Link">
                     <label for="editPlantName" class="form-label">Plant Name</label>
                     <input type="text" id="editPlantName" class="form-control mb-2">
                     <label for="editPlantSeason" class="form-label">Season</label>
                     <input type="text" id="editPlantSeason" class="form-control mb-2">
                     <label for="editGrowthStage" class="form-label">Growth Stage</label>
                     <input type="text" id="editGrowthStage" class="form-control">
+                    <label for="editPestPressure" class="form-label">Pest Pressure</label>
+                    <input type="text" id="editPestPressure" class="form-control mb-2" placeholder="Pest Pressure" />
+                    <label for="editFertilizerUsage" class="form-label">Fertilizer Usage</label>
+                    <input type="text" id="editFertilizerUsage" class="form-control mb-2" placeholder="Fertilizer Usage" />
+                    <label for="editPlantationId" class="form-label">Plantation ID</label>
+                    <select id="editPlantationId" class="form-control mb-2"></select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -192,16 +207,41 @@
         <td>${plant.plant}</td>
         <td>${plant.plant_season}</td>
         <td>${plant.growth_stage}</td>
+        <td>${plant.pest_pressure}</td>
+        <td>${plant.fertilizer_usage}</td>
+        <td>${plant.plantation_id}</td>
         <td>
-            <button class="btn btn-warning btn-sm" onclick="editPlant(${plant.id}, '${plant.plant}', '${plant.plant_season}', '${plant.growth_stage}', '${imageSrc}')" data-bs-toggle="modal" data-bs-target="#editPlantModal">Edit</button>
+            <button class="btn btn-warning btn-sm" onclick="editPlant(${plant.id}, '${plant.plant}', '${plant.plant_season}', '${plant.growth_stage}', '${imageSrc}', '${plant.pest_pressure}', '${plant.fertilizer_usage}', '${plant.plantation_id}')" data-bs-toggle="modal" data-bs-target="#editPlantModal">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="deletePlant(${plant.id})">Delete</button>
         </td>
     </tr>`;
    });
         }
 
-        function validatePlantInput(name, season, stage) {
-            if (!name || !season || !stage) {
+        async function fetchPlantations() {
+    const res = await fetch("/api/plantationarea");
+    const data = await res.json();
+    const plantationSelect = document.getElementById("plantationId");
+    const editPlantationSelect = document.getElementById("editPlantationId");
+
+    plantationSelect.innerHTML = "";
+    editPlantationSelect.innerHTML = "";
+
+    data.forEach(plantation => {
+        const option = document.createElement("option");
+        option.value = plantation.id;
+        option.textContent = plantation.plantation_area;
+        plantationSelect.appendChild(option);
+
+        const editOption = document.createElement("option");
+        editOption.value = plantation.id;
+        editOption.textContent = plantation.plantation_area;
+        editPlantationSelect.appendChild(editOption);
+    });
+}
+
+        function validatePlantInput(name, season, stage, pestPressure, fertilizerUsage, plantationId, imageLink) {
+            if (!name || !season || !stage || !pestPressure || !fertilizerUsage || !plantationId || !imageLink) {
                 alert("All fields are required!");
                 return false;
             }
@@ -212,9 +252,15 @@
             document.getElementById("plantName").value = "";
             document.getElementById("plantSeason").value = "";
             document.getElementById("growthStage").value = "";
+            document.getElementById("pestPressure").value = "";
+            document.getElementById("fertilizerUsage").value = "";
+            document.getElementById("plantationId").value = "";
             document.getElementById("editPlantName").value = "";
             document.getElementById("editPlantSeason").value = "";
             document.getElementById("editGrowthStage").value = "";
+            document.getElementById("editPestPressure").value = "";
+            document.getElementById("editFertilizerUsage").value = "";
+            document.getElementById("editPlantationId").value = "";
             document.getElementById("editImagePreview").src = "";
         }
 
@@ -223,25 +269,31 @@
             const plant_season = document.getElementById("plantSeason").value;
             const growth_stage = document.getElementById("growthStage").value;
             const image_link = document.getElementById("plantImage").value;
-            if (!validatePlantInput(plant, plant_season, growth_stage)) return;
+            const pest_pressure = document.getElementById("pestPressure").value;
+            const fertilizer_usage = document.getElementById("fertilizerUsage").value;
+            const plantation_id = document.getElementById("plantationId").value;
+            if (!validatePlantInput(plant, plant_season, growth_stage, pest_pressure, fertilizer_usage, plantation_id, image_link)) return;
 
             await fetch("/api/plant", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plant, plant_season, growth_stage, image_link })
+                body: JSON.stringify({ plant, plant_season, growth_stage, image_link, pest_pressure, fertilizer_usage, plantation_id })
             });
             clearPlantInputs();
             fetchPlants();
             $("#addPlantModal").modal("hide");
         });
 
-        window.editPlant = function (id, name, season, stage, image) {
+        window.editPlant = function (id, name, season, stage, image, pestPressure, fertilizerUsage, plantationId) {
     document.getElementById("editPlantId").value = id;
     document.getElementById("editPlantName").value = name;
     document.getElementById("editPlantSeason").value = season;
     document.getElementById("editGrowthStage").value = stage;
     document.getElementById("editPlantImage").value = image || "";
     document.getElementById("editImagePreview").src = image ? image : "/assets/noimage.jpg";
+    document.getElementById("editPestPressure").value = pestPressure;
+    document.getElementById("editFertilizerUsage").value = fertilizerUsage;
+    document.getElementById("editPlantationId").value = plantationId;
 };
 
 
@@ -251,12 +303,15 @@
             const plant_season = document.getElementById("editPlantSeason").value;
             const growth_stage = document.getElementById("editGrowthStage").value;
             const image_link = document.getElementById("editPlantImage").value;
-            if (!validatePlantInput(plant, plant_season, growth_stage)) return;
+            const pest_pressure = document.getElementById("editPestPressure").value;
+            const fertilizer_usage = document.getElementById("editFertilizerUsage").value;
+            const plantation_id = document.getElementById("editPlantationId").value;
+            if (!validatePlantInput(plant, plant_season, growth_stage, pest_pressure, fertilizer_usage, plantation_id, image_link)) return;
 
             await fetch(`/api/plant/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plant, plant_season, growth_stage , image_link})
+                body: JSON.stringify({ plant, plant_season, growth_stage , image_link, pest_pressure, fertilizer_usage, plantation_id })
             });
             clearPlantInputs();
             fetchPlants();
@@ -272,7 +327,8 @@
     window.location.href = `/pages/plantation-dashboard.html?id=${plantationId}`;
 }
 
-        fetchPlants();
+        fetchPlantations();
+fetchPlants();
 
 
     </script>
