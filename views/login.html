@@ -40,7 +40,11 @@
     const data = await res.json();
     if (data.message === "Login successful") {
         localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "/home";
+        if (data.user.role === "owner") {
+                window.location.href = "/geostatic";
+            } else {
+                
+            }
     } else {
         alert("Invalid Credentials!");
     }

@@ -35,6 +35,16 @@ app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "login.html"));
 });
 
+// geospatail-map
+app.get("/geostatic", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "geostatic.html"));
+});
+
+// plant_area
+app.get("/plant_area", (req, res) =>
+    res.sendFile(path.join(__dirname, "views", "plant_area.html"))
+);
+
 // Serve registration page
 app.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "register.html"));
@@ -117,6 +127,32 @@ const createRouter = (tableName) => {
             }
         );
     });
+
+    // Update data
+    router.put("/:id", (req, res) => {
+        const id = req.params.id;
+        const keys = Object.keys(req.body);
+        const values = Object.values(req.body);
+
+        if (!keys.length) return res.status(400).json({ error: "No data provided" });
+
+        db.query(`UPDATE ?? SET ${keys.map((key) => `${key} = ?`).join(", ")} WHERE id = ?`,
+            [tableName, ...values, id], (err) => {
+                if (err) return res.status(500).json(err);
+                res.json({ message: `${tableName} data updated` });
+            }
+        );
+    });
+
+    // Delete data
+    router.delete("/:id", (req, res) => {
+        const id = req.params.id;
+        db.query(`DELETE FROM ?? WHERE id = ?`, [tableName, id], (err) => {
+            if (err) return res.status(500).json(err);
+            res.json({ message: `${tableName} data deleted` });
+        });
+    }
+    );
     
     return router;
 };
