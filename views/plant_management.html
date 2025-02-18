@@ -37,6 +37,36 @@
         </div>
     </nav>
     <!-- end navigation -->
+    <style>
+        .image-preview {
+          display: block;
+          margin: 10px auto;
+          border-radius: 50%;
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border: 2px solid #ddd;
+        }
+        .table-container {
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .table thead {
+          background: #007bff;
+          color: white;
+          text-align: center;
+        }
+        .table tbody tr:hover {
+          background: #f8f9fa;
+          cursor: pointer;
+        }
+        .table td,
+        .table th {
+          vertical-align: middle;
+          text-align: center;
+        }
+      </style>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
@@ -46,6 +76,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
+                    <th>Image</th>
                     <th>Plant Name</th>
                     <th>Season</th>
                     <th>Growth Stage</th>
@@ -65,8 +96,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- textfile image -->
+                     <!-- lable -->
+                        <label for="plantImage" class="form-label">Plant Image</label>
+                    <input type="file" id="plantImage" class="form-control mb-2" placeholder="Plant Image">
+                    <!-- textfile image -->
+                     <label for="plantName" class="form-label">Plant Name</label>
                     <input type="text" id="plantName" class="form-control mb-2" placeholder="Plant Name">
+                    <label for="plantSeason" class="form-label">Season</label>
                     <input type="text" id="plantSeason" class="form-control mb-2" placeholder="Season">
+                    <label for="growthStage" class="form-label">Growth Stage</label>
                     <input type="text" id="growthStage" class="form-control" placeholder="Growth Stage">
                 </div>
 <body class="bg-light">
@@ -87,9 +126,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- image previre -->
+                    <img
+                  id="editImagePreview"
+                  src=""
+                  alt="Preview"
+                  class="image-preview"
+                />
                     <input type="hidden" id="editPlantId">
+                    <!-- image path -->
+                    <label for="editPlantImage" class="form-label">Plant Image</label>
+                    <input type="text" id="editPlantImage" class="form-control mb-2">
+                    <label for="editPlantName" class="form-label">Plant Name</label>
                     <input type="text" id="editPlantName" class="form-control mb-2">
+                    <label for="editPlantSeason" class="form-label">Season</label>
                     <input type="text" id="editPlantSeason" class="form-control mb-2">
+                    <label for="editGrowthStage" class="form-label">Growth Stage</label>
                     <input type="text" id="editGrowthStage" class="form-control">
                 </div>
                 <div class="modal-footer">
@@ -106,19 +158,24 @@
             const data = await res.json();
             const tableBody = document.getElementById("plantTable");
             tableBody.innerHTML = "";
+           
             data.forEach(plant => {
+                const imageSrc = plant.image_link
+                ? plant.image_link
+                : "/assets/noimage.jpg";
                 tableBody.innerHTML += `
-                    <tr>
-                        <td>${plant.id}</td>
-                        <td>${plant.plant}</td>
-                        <td>${plant.plant_season}</td>
-                        <td>${plant.growth_stage}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editPlant(${plant.id}, '${plant.plant}', '${plant.plant_season}', '${plant.growth_stage}')" data-bs-toggle="modal" data-bs-target="#editPlantModal">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deletePlant(${plant.id})">Delete</button>
-                        </td>
-                    </tr>`;
-            });
+    <tr>
+        <td>${plant.id}</td>
+        <td><img src="${imageSrc}" class="image-preview"></td>
+        <td>${plant.plant}</td>
+        <td>${plant.plant_season}</td>
+        <td>${plant.growth_stage}</td>
+        <td>
+            <button class="btn btn-warning btn-sm" onclick="editPlant(${plant.id}, '${plant.plant}', '${plant.plant_season}', '${plant.growth_stage}', '${imageSrc}')" data-bs-toggle="modal" data-bs-target="#editPlantModal">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deletePlant(${plant.id})">Delete</button>
+        </td>
+    </tr>`;
+   });
         }
 
         function validatePlantInput(name, season, stage) {
@@ -136,42 +193,48 @@
             document.getElementById("editPlantName").value = "";
             document.getElementById("editPlantSeason").value = "";
             document.getElementById("editGrowthStage").value = "";
+            document.getElementById("editImagePreview").src = "";
         }
 
         document.getElementById("savePlant").addEventListener("click", async () => {
             const plant = document.getElementById("plantName").value;
             const plant_season = document.getElementById("plantSeason").value;
             const growth_stage = document.getElementById("growthStage").value;
+            const image_link = document.getElementById("plantImage").value;
             if (!validatePlantInput(plant, plant_season, growth_stage)) return;
 
             await fetch("/api/plant", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plant, plant_season, growth_stage })
+                body: JSON.stringify({ plant, plant_season, growth_stage, image_link })
             });
             clearPlantInputs();
             fetchPlants();
             $("#addPlantModal").modal("hide");
         });
 
-        window.editPlant = function (id, name, season, stage) {
-            document.getElementById("editPlantId").value = id;
-            document.getElementById("editPlantName").value = name;
-            document.getElementById("editPlantSeason").value = season;
-            document.getElementById("editGrowthStage").value = stage;
-        };
+        window.editPlant = function (id, name, season, stage, image) {
+    document.getElementById("editPlantId").value = id;
+    document.getElementById("editPlantName").value = name;
+    document.getElementById("editPlantSeason").value = season;
+    document.getElementById("editGrowthStage").value = stage;
+    document.getElementById("editPlantImage").value = image || "";
+    document.getElementById("editImagePreview").src = image ? image : "/assets/noimage.jpg";
+};
+
 
         document.getElementById("updatePlant").addEventListener("click", async () => {
             const id = document.getElementById("editPlantId").value;
             const plant = document.getElementById("editPlantName").value;
             const plant_season = document.getElementById("editPlantSeason").value;
             const growth_stage = document.getElementById("editGrowthStage").value;
+            const image_link = document.getElementById("editPlantImage").value;
             if (!validatePlantInput(plant, plant_season, growth_stage)) return;
 
             await fetch(`/api/plant/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ plant, plant_season, growth_stage })
+                body: JSON.stringify({ plant, plant_season, growth_stage , image_link})
             });
             clearPlantInputs();
             fetchPlants();
