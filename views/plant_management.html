@@ -16,32 +16,18 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav
-                    ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/plant_area">Plantation Area</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/plant_management">Plant Management</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/geostatic">Geospatial</a>
-                    </li>
-                     <!-- dash board -->
-                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                   
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/plant_area">Plantation Area</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/plant_management">Plant Management</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/geostatic">Geospatial</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/" onclick="logout()">Logout</a></li>
                 </ul>
             </div>
         </div>
     </nav>
+    
     <!-- end navigation -->
     <style>
         .image-preview {
@@ -159,6 +145,36 @@
     </div>
 
     <script>
+         function logout() {
+          localStorage.removeItem("user");
+          window.location.href = "/";
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        // Redirect to login if not authenticated
+        window.location.href = "/login";
+        return;
+    }
+
+    // Define role-based navigation
+    const navItems = {
+        owner: ["/home", "/plant_area", "/plant_management", "/dashboard", "/geostatic", "/"],
+        farmer: ["/home", "/plant_area", "/"],
+        consultant: ["/home", "/dashboard", "/"]
+    };
+
+    // Get all navigation links
+    document.querySelectorAll(".nav-link").forEach((link) => {
+        const href = link.getAttribute("href");
+
+        // Hide links not allowed for the user's role
+        if (!navItems[user.role].includes(href)) {
+            link.parentElement.style.display = "none";
+        }
+    });
+});
         async function fetchPlants() {
             const res = await fetch("/api/plant");
             const data = await res.json();

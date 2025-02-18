@@ -29,6 +29,38 @@ db.connect(err => {
     }
     console.log("Connected to MySQL Database");
 });
+function checkUserAccess(requiredRole) {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        alert("You must be logged in!");
+        window.location.href = "/login";
+        return;
+    }
+
+    if (user.role !== "owner" && user.role !== requiredRole) {
+        alert("Access Denied! You do not have permission to access this page.");
+        window.location.href = user.role === "farmer" ? "/plant_area" : "/dashboard";
+    }
+}
+function checkRole(allowedRoles) {
+    return (req, res, next) => {
+        const { username } = req.body;
+        
+        db.query("SELECT role FROM users WHERE username = ?", [username], (err, results) => {
+            if (err) return res.status(500).json(err);
+            if (results.length === 0) return res.status(401).json({ error: "User not found" });
+
+            const userRole = results[0].role;
+
+            if (!allowedRoles.includes(userRole)) {
+                return res.status(403).json({ error: "Access Denied" });
+            }
+
+            next();
+        });
+    };
+}
 
 // Serve login page
 app.get("/login", (req, res) => {
