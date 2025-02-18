@@ -266,6 +266,8 @@ app.get("/api/sensordata", (req, res) => {
     );
 });
 
+
+
 // Define API Routes
 const createRouter = (tableName) => {
     const router = express.Router();
@@ -363,6 +365,21 @@ app.get("/api/plantation-areas", (req, res) => {
     db.query(query, (err, results) => {
         if (err) res.status(500).json(err);
         else res.json(results);
+    });
+});
+app.get("/api/alert-distribution", (req, res) => {
+    const sql = `
+        SELECT 
+            alert_type, 
+            COUNT(id) AS alert_count
+        FROM Alerts
+        GROUP BY alert_type
+        ORDER BY alert_count DESC;
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
     });
 });
 
