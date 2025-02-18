@@ -57,6 +57,10 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "home.html"));
 });
+// plant_management
+app.get("/plant_management", (req, res) =>
+    res.sendFile(path.join(__dirname, "views", "plant_management.html"))
+);
 
 // API for user registration
 app.post("/api/register", async (req, res) => {

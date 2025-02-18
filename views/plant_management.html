@@ -1,11 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Manage Plants</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!-- navigation -->
+     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/home">Smart Farm</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/plant_area">Plantation Area</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/plant_management">Plant Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/geostatic">Geospatial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- end navigation -->
 </head>
-<body>
-    
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center">Manage Plants</h2>
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPlantModal">Add Plant</button>
+        <table class="table table-bordered bg-white">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Plant Name</th>
+                    <th>Season</th>
+                    <th>Growth Stage</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="plantTable"></tbody>
+        </table>
+    </div>
+
+    <!-- Add Plant Modal -->
+    <div class="modal fade" id="addPlantModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Plant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="plantName" class="form-control mb-2" placeholder="Plant Name">
+                    <input type="text" id="plantSeason" class="form-control mb-2" placeholder="Season">
+                    <input type="text" id="growthStage" class="form-control" placeholder="Growth Stage">
+                </div>
+<body class="bg-light">
+   
+    <div class="container mt-5">
+                    <button type="button" class="btn btn-primary" id="savePlant">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Plant Modal -->
+    <div class="modal fade" id="editPlantModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Plant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editPlantId">
+                    <input type="text" id="editPlantName" class="form-control mb-2">
+                    <input type="text" id="editPlantSeason" class="form-control mb-2">
+                    <input type="text" id="editGrowthStage" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="updatePlant">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchPlants() {
+            const res = await fetch("/api/plant");
+            const data = await res.json();
+            const tableBody = document.getElementById("plantTable");
+            tableBody.innerHTML = "";
+            data.forEach(plant => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${plant.id}</td>
+                        <td>${plant.plant}</td>
+                        <td>${plant.plant_season}</td>
+                        <td>${plant.growth_stage}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editPlant(${plant.id}, '${plant.plant}', '${plant.plant_season}', '${plant.growth_stage}')" data-bs-toggle="modal" data-bs-target="#editPlantModal">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deletePlant(${plant.id})">Delete</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function validatePlantInput(name, season, stage) {
+            if (!name || !season || !stage) {
+                alert("All fields are required!");
+                return false;
+            }
+            return true;
+        }
+
+        function clearPlantInputs() {
+            document.getElementById("plantName").value = "";
+            document.getElementById("plantSeason").value = "";
+            document.getElementById("growthStage").value = "";
+            document.getElementById("editPlantName").value = "";
+            document.getElementById("editPlantSeason").value = "";
+            document.getElementById("editGrowthStage").value = "";
+        }
+
+        document.getElementById("savePlant").addEventListener("click", async () => {
+            const plant = document.getElementById("plantName").value;
+            const plant_season = document.getElementById("plantSeason").value;
+            const growth_stage = document.getElementById("growthStage").value;
+            if (!validatePlantInput(plant, plant_season, growth_stage)) return;
+
+            await fetch("/api/plant", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ plant, plant_season, growth_stage })
+            });
+            clearPlantInputs();
+            fetchPlants();
+            $("#addPlantModal").modal("hide");
+        });
+
+        window.editPlant = function (id, name, season, stage) {
+            document.getElementById("editPlantId").value = id;
+            document.getElementById("editPlantName").value = name;
+            document.getElementById("editPlantSeason").value = season;
+            document.getElementById("editGrowthStage").value = stage;
+        };
+
+        document.getElementById("updatePlant").addEventListener("click", async () => {
+            const id = document.getElementById("editPlantId").value;
+            const plant = document.getElementById("editPlantName").value;
+            const plant_season = document.getElementById("editPlantSeason").value;
+            const growth_stage = document.getElementById("editGrowthStage").value;
+            if (!validatePlantInput(plant, plant_season, growth_stage)) return;
+
+            await fetch(`/api/plant/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ plant, plant_season, growth_stage })
+            });
+            clearPlantInputs();
+            fetchPlants();
+            $("#editPlantModal").modal("hide");
+        });
+
+        async function deletePlant(id) {
+            await fetch(`/api/plant/${id}`, { method: "DELETE" });
+            fetchPlants();
+        }
+
+        fetchPlants();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
