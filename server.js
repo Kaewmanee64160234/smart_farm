@@ -126,6 +126,9 @@ const createRouter = (tableName) => {
                 res.json({ message: `${tableName} data inserted` });
             }
         );
+        // log query
+        console.log(`INSERT INTO ?? (${keys.map(() => "??").join(", ")}) VALUES (${keys.map(() => "?").join(", ")})`,
+            [tableName, ...keys, ...values]);
     });
 
     // Update data
@@ -142,6 +145,9 @@ const createRouter = (tableName) => {
                 res.json({ message: `${tableName} data updated` });
             }
         );
+        // log query
+        console.log(`UPDATE ?? SET ${keys.map((key) => `${key} = ?`).join(", ")} WHERE id = ?`,
+            [tableName, ...values, id]);
     });
 
     // Delete data
@@ -151,6 +157,8 @@ const createRouter = (tableName) => {
             if (err) return res.status(500).json(err);
             res.json({ message: `${tableName} data deleted` });
         });
+        // log qury 
+        console.log(`DELETE FROM ?? WHERE id = ?`, [tableName, id]);
     }
     );
     
