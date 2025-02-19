@@ -144,18 +144,23 @@
             const user = JSON.parse(localStorage.getItem("user"));
 
             if (!user) {
+                // Redirect to login if not authenticated
                 window.location.href = "/login";
                 return;
             }
 
+            // Define role-based navigation
             const navItems = {
                 owner: ["/home", "/plant_area", "/plant_management", "/dashboard", "/geostatic", "/"],
                 farmer: ["/home", "/plant_area", "/"],
                 consultant: ["/home", "/dashboard", "/"]
             };
 
-            document.querySelectorAll(".nav-link").forEach(link => {
+            // Get all navigation links
+            document.querySelectorAll(".nav-link").forEach((link) => {
                 const href = link.getAttribute("href");
+
+                // Hide links not allowed for the user's role
                 if (!navItems[user.role].includes(href)) {
                     link.parentElement.style.display = "none";
                 }

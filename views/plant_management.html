@@ -167,7 +167,7 @@
         document.addEventListener("DOMContentLoaded", function () {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    if (!user) {
+    if (!user || !user.role) {
         // Redirect to login if not authenticated
         window.location.href = "/login";
         return;
@@ -189,6 +189,9 @@
             link.parentElement.style.display = "none";
         }
     });
+
+    fetchPlantations();
+    fetchPlants();
 });
         async function fetchPlants() {
             const res = await fetch("/api/plant");

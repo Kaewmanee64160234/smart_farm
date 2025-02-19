@@ -293,11 +293,11 @@
           document.addEventListener("DOMContentLoaded", function () {
             const user = JSON.parse(localStorage.getItem("user"));
 
-            if (!user) {
-              // Redirect to login if not authenticated
-              window.location.href = "/login";
-              return;
-            }
+            // if (!user) {
+            //   // Redirect to login if not authenticated
+            //   window.location.href = "/login";
+            //   return;
+            // }
 
             // Define role-based navigation
             const navItems = {
