@@ -17,6 +17,7 @@
       /* Background */
       body {
         background: var(--background-color);
+        
       }
 
       /* Header */
@@ -78,7 +79,6 @@
                     <li class="nav-item"><a class="nav-link" href="/plant_area">Plantation Area</a></li>
                     <li class="nav-item"><a class="nav-link" href="/plant_management">Plant Management</a></li>
                     <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/geostatic">Geospatial</a></li>
                     <li class="nav-item"><a class="nav-link" href="/" onclick="logout()">Logout</a></li>
                 </ul>
             </div>
@@ -87,7 +87,7 @@
 
     <!-- Content -->
     <div class="container mt-5">
-        <h2 class="text-center text-primary">Sensor Data Dashboard</h2>
+        <h2 class="text-center ">Sensor Data Dashboard</h2>
 
         <div class="row">
             <div class="col-md-6">
@@ -204,19 +204,20 @@
 
             // Define role-based navigation
             const navItems = {
-                owner: ["/home", "/plant_area", "/plant_management", "/dashboard", "/geostatic", "/"],
+                owner: ["/home", "/plant_area", "/plant_management", "/dashboard", "/"],
                 farmer: ["/home", "/plant_area", "/"],
                 consultant: ["/home", "/dashboard", "/"]
             };
 
-            // Get all navigation links
-            document.querySelectorAll(".nav-link").forEach((link) => {
-                const href = link.getAttribute("href");
+           
+                   // Get all navigation links
+                   document.querySelectorAll(".nav-link").forEach((link) => {
+              const href = link.getAttribute("href");
 
-                // Hide links not allowed for the user's role
-                if (!navItems[user.role].includes(href)) {
-                    link.parentElement.style.display = "none";
-                }
+              // Hide links not allowed for the user's role
+              if (!navItems[user.role].includes(href)) {
+                link.parentElement.style.display = "none";
+              }
             });
 
             fetchMultiSensorData();

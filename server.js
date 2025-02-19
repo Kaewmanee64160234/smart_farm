@@ -67,11 +67,6 @@ app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "login.html"));
 });
 
-// geospatail-map
-app.get("/geostatic", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "geostatic.html"));
-});
-
 // plant_area
 app.get("/plant_area", (req, res) =>
     res.sendFile(path.join(__dirname, "views", "plant_area.html"))
