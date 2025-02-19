@@ -4,810 +4,714 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Plantation Areas</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <style>
+      /* Theme Colors */
+      :root {
+        --primary-color: #0D9276; /* Green */
+        --secondary-color: #40A2E3; /* Blue */
+        --background-color: #FFF6E9; /* Light Cream */
+      }
+
+      /* Background */
+      body {
+        background: var(--background-color);
+      }
+
+      /* Header */
+      .navbar {
+        background: var(--secondary-color);
+      }
+      .navbar-brand,
+      .nav-link {
+        color: white !important;
+        font-weight: bold;
+      }
+
+      /* Table Styling */
+      .table-container {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .table thead {
+        background: var(--primary-color);
+        color: white;
+        text-align: center;
+      }
+      .table tbody tr:hover {
+        background: rgba(64, 162, 227, 0.2);
+        cursor: pointer;
+      }
+
+      /* Buttons */
+      .btn-primary {
+        background: var(--secondary-color);
+        border: none;
+      }
+      .btn-primary:hover {
+        background: #3693d3;
+      }
+      .btn-success {
+        background: var(--primary-color);
+        border: none;
+      }
+      .btn-success:hover {
+        background: #0b7a63;
+      }
+
+      /* Modals */
+      .modal-header {
+        background: var(--secondary-color);
+        color: white;
+      }
+      .modal-footer button {
+        width: 100%;
+      }
+
+      /* Image Preview */
+      .image-preview {
+        display: block;
+        margin: 10px auto;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
       <div class="container">
         <a class="navbar-brand" href="/home">Smart Farm</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
-            <li class="nav-item">
-              <a class="nav-link" href="/plant_area">Plantation Area</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/plant_management">Plant Management</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/geostatic">Geospatial</a>
-            </li>
-            <!-- button logout -->
-            <!-- button -->
-            <li class="nav-item">
-              <a class="nav-link" href="/" onclick="logout()">Logout</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="/plant_area">Plantation Area</a></li>
+            <li class="nav-item"><a class="nav-link" href="/plant_management">Plant Management</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/" onclick="logout()">Logout</a></li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- end navigation -->
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Manage Plantation Areas</title>
-        <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-        />
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <style>
-          .image-preview {
-            display: block;
-            margin: 10px auto;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-          }
-          .table-container {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-          }
-          .table thead {
-            background: #007bff;
-            color: white;
-            text-align: center;
-          }
-          .table tbody tr:hover {
-            background: #f8f9fa;
-            cursor: pointer;
-          }
-          .table td,
-          .table th {
-            vertical-align: middle;
-            text-align: center;
-          }
-          .invalid-feedback {
-            display: none;
-            color: red;
-          }
-          .valid-feedback {
-            display: none;
-            color: green;
-          }
-        </style>
-      </head>
-      <body class="bg-light">
-        <div class="container mt-5">
-          <h2 class="text-center">Manage Plantation Areas</h2>
-          <button
-            class="btn btn-primary mb-3"
-            data-bs-toggle="modal"
-            data-bs-target="#addModal"
-          >
-            Add Plantation
-          </button>
-          <table class="table table-bordered bg-white">
-            <thead class="table-dark">
-              <tr>
-                <th>ID</th>
-                <th>Image</th>
-                <th>Plantation Area</th>
-                <th>Soil Type</th>
-                <th>Urban Area Proximity</th>
-                <th>Water Source Type</th>
-                <th>Crop Density</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="plantationTable"></tbody>
-          </table>
-        </div>
+    <!-- Main Content -->
+    <div class="container mt-5">
+      <h2 class="text-center text-primary">Manage Plantation Areas</h2>
+      <div class="">
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addModal">Add Plantation</button>
+      </div>
+      <div class="table-container">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Image</th>
+              <th>Plantation Area</th>
+              <th>Soil Type</th>
+              <th>Urban Area Proximity</th>
+              <th>Water Source Type</th>
+              <th>Crop Density</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="plantationTable"></tbody>
+        </table>
+      </div>
+    </div>
 
-        <!-- Add Plantation Modal -->
-        <div class="modal fade" id="addModal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Add Plantation</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <!-- lable text -->
-                <label for="imageLink" class="form-label">Image Link</label>
-                <input
-                  type="text"
-                  id="imageLink"
-                  class="form-control"
-                  placeholder="Image Link"
-                />
-                <div class="invalid-feedback">
-                  Please enter a valid image URL (JPG, PNG, GIF, SVG).
-                </div>
-                <div class="valid-feedback">Valid image URL.</div>
-                <label for="plantationName" class="form-label"
-                  >Plantation Area</label
-                >
-                <input
-                  type="text"
-                  id="plantationName"
-                  class="form-control mb-2"
-                  placeholder="Plantation Area"
-                />
-                <div class="invalid-feedback">
-                  Plantation Area must be a valid string.
-                </div>
-                <div class="valid-feedback">Valid Plantation Area.</div>
-                <label for="soilType" class="form-label">Soil Type</label>
-                <input
-                  type="text"
-                  id="soilType"
-                  class="form-control mb-2"
-                  placeholder="Soil Type"
-                />
-                <div class="invalid-feedback">Soil Type must be a valid string.</div>
-                <div class="valid-feedback">Valid Soil Type.</div>
-                <label for="urbanAreaProximity" class="form-label"
-                  >Urban Area Proximity</label
-                >
-                <input
-                  type="text"
-                  id="urbanAreaProximity"
-                  class="form-control mb-2"
-                  placeholder="Urban Area Proximity"
-                />
-                <div class="invalid-feedback">
-                  Urban Area Proximity must be a valid string.
-                </div>
-                <div class="valid-feedback">Valid Urban Area Proximity.</div>
-                <label for="waterSourceType" class="form-label"
-                  >Water Source Type</label
-                >
-                <input
-                  type="text"
-                  id="waterSourceType"
-                  class="form-control mb-2"
-                  placeholder="Water Source Type"
-                />
-                <div class="invalid-feedback">
-                  Water Source Type must be a valid string.
-                </div>
-                <div class="valid-feedback">Valid Water Source Type.</div>
-                <label for="cropDensity" class="form-label">Crop Density</label>
-                <input
-                  type="text"
-                  id="cropDensity"
-                  class="form-control mb-2"
-                  placeholder="Crop Density"
-                />
-                <div class="invalid-feedback">
-                  Crop Density must be a number greater than zero.
-                </div>
-                <div class="valid-feedback">Valid Crop Density.</div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="savePlantation"
-                >
-                  Save
-                </button>
-              </div>
+     <!-- Add Plantation Modal -->
+     <div class="modal fade" id="addModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Plantation</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- lable text -->
+            <label for="imageLink" class="form-label">Image Link</label>
+            <input type="text" id="imageLink" class="form-control validate validate-url" placeholder="Image Link" />
+            <div class="feedback-wrapper">
+              <div class="invalid-feedback">Please enter a valid image URL (JPG, PNG, GIF, SVG).</div>
+              <div class="valid-feedback">Valid image URL.</div>
+            </div>
+            
+            <label for="plantationName" class="form-label"
+              >Plantation Area</label
+            >
+            <input
+              type="text"
+              id="plantationName"
+              class="form-control mb-2"
+              placeholder="Plantation Area"
+            />
+            <div class="feedback-wrapper">
+              <div class="invalid-feedback">Plantation Area must be a valid string.</div>
+              <div class="valid-feedback">Valid Plantation Area.</div>
+            </div>
+            <label for="soilType" class="form-label">Soil Type</label>
+            <input
+              type="text"
+              id="soilType"
+              class="form-control mb-2"
+              placeholder="Soil Type"
+            />
+            <div class="feedback-wrapper">
+              <div class="invalid-feedback">Soil Type must be a valid string.</div>
+              <div class="valid-feedback">Valid Soil Type.</div>
+            </div>
+            <label for="urbanAreaProximity" class="form-label"
+              >Urban Area Proximity</label
+            >
+            <input
+              type="number"
+              id="urbanAreaProximity"
+              class="form-control mb-2"
+              placeholder="Urban Area Proximity"
+            />
+            <div class="feedback-wrapper">
+              <div class="invalid-feedback">Urban Area Proximity must be a valid float.</div>
+              <div class="valid-feedback">Valid Urban Area Proximity.</div>
+            </div>
+            <label for="waterSourceType" class="form-label"
+              >Water Source Type</label
+            >
+            <input
+              type="text"
+              id="waterSourceType"
+              class="form-control mb-2"
+              placeholder="Water Source Type"
+            />
+            <div class="feedback-wrapper">
+              <div class="invalid-feedback">Crop Density must be a number greater than zero.</div>
+              <div class="valid-feedback">Valid Crop Density.</div>
+            </div>
+            <label for="cropDensity" class="form-label">Crop Density</label>
+            <input
+              type="text"
+              id="cropDensity"
+              class="form-control mb-2"
+              placeholder="Crop Density"
+            />
+            <div class="invalid-feedback">
+              Crop Density must be a number greater than zero.
+            </div>
+            <div class="valid-feedback">Valid Crop Density.</div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="savePlantation"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- Edit Plantation Modal -->
+     <div class="modal fade" id="editModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Plantation</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body text-start">
+            <img
+              id="editImagePreview"
+              src=""
+              alt="Preview"
+              class="image-preview"
+            />
+            <input type="hidden" id="editId" />
+            <label for="editImageLink" class="form-label">Image Link</label>
+            <input
+              type="text"
+              id="editImageLink"
+              class="form-control mb-2"
+              placeholder="Image Link"
+              oninput="updatePreview()"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid image URL (JPG, PNG, GIF, SVG).
+            </div>
+            <div class="valid-feedback">Valid image URL.</div>
+            <label for="editPlantationName" class="form-label"
+              >Plantation Area</label
+            >
+            <input
+              type="text"
+              id="editPlantationName"
+              class="form-control mb-2"
+              placeholder="Plantation Area"
+            />
+            <div class="invalid-feedback">
+              Plantation Area must be a valid string.
+            </div>
+            <div class="valid-feedback">Valid Plantation Area.</div>
+            <label for="editSoilType" class="form-label">Soil Type</label>
+            <input
+              type="text"
+              id="editSoilType"
+              class="form-control mb-2"
+              placeholder="Soil Type"
+            />
+            <div class="invalid-feedback">Soil Type must be a valid string.</div>
+            <div class="valid-feedback">Valid Soil Type.</div>
+            <label for="editUrbanAreaProximity" class="form-label"
+              >Urban Area Proximity</label
+            >
+            <input
+              type="text"
+              id="editUrbanAreaProximity"
+              class="form-control mb-2"
+              placeholder="Urban Area Proximity"
+            />
+            <div class="invalid-feedback">
+              Urban Area Proximity must be a valid float.
+            </div>
+            <div class="valid-feedback">Valid Urban Area Proximity.</div>
+            <label for="editWaterSourceType" class="form-label"
+              >Water Source Type</label
+            >
+            <input
+              type="text"
+              id="editWaterSourceType"
+              class="form-control mb-2"
+              placeholder="Water Source Type"
+            />
+            <div class="invalid-feedback">
+              Water Source Type must be a valid string.
+            </div>
+            <div class="valid-feedback">Valid Water Source Type.</div>
+            <label for="editCropDensity" class="form-label"
+              >Crop Density</label
+            >
+            <input
+              type="text"
+              id="editCropDensity"
+              class="form-control mb-2"
+              placeholder="Crop Density"
+            />
+            <div class="invalid-feedback">
+              Crop Density must be a number greater than zero.
+            </div>
+            <div class="valid-feedback">Valid Crop Density.</div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              id="updatePlantation"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+      <!-- Delete Confirmation Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Deletion</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to delete this plantation?</p>
+              <input type="hidden" id="deleteId" />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="button" class="btn btn-danger" id="confirmDelete">
+                Delete
+              </button>
             </div>
           </div>
         </div>
+      </div>
+ <!-- Notification Modal -->
+ <div class="modal fade" id="notificationModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notificationTitle"></h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body" id="notificationMessage"></div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary w-100"
+          data-bs-dismiss="modal"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-        <!-- Edit Plantation Modal -->
-        <div class="modal fade" id="editModal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Edit Plantation</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                ></button>
-              </div>
-              <div class="modal-body text-start">
-                <img
-                  id="editImagePreview"
-                  src=""
-                  alt="Preview"
-                  class="image-preview"
-                />
-                <input type="hidden" id="editId" />
-                <label for="editImageLink" class="form-label">Image Link</label>
-                <input
-                  type="text"
-                  id="editImageLink"
-                  class="form-control mb-2"
-                  placeholder="Image Link"
-                  oninput="updatePreview()"
-                />
-                <div class="invalid-feedback">
-                  Please enter a valid image URL (JPG, PNG, GIF, SVG).
-                </div>
-                <div class="valid-feedback">Valid image URL.</div>
-                <label for="editPlantationName" class="form-label"
-                  >Plantation Area</label
-                >
-                <input
-                  type="text"
-                  id="editPlantationName"
-                  class="form-control mb-2"
-                  placeholder="Plantation Area"
-                />
-                <div class="invalid-feedback">
-                  Plantation Area must be a valid string.
-                </div>
-                <div class="valid-feedback">Valid Plantation Area.</div>
-                <label for="editSoilType" class="form-label">Soil Type</label>
-                <input
-                  type="text"
-                  id="editSoilType"
-                  class="form-control mb-2"
-                  placeholder="Soil Type"
-                />
-                <div class="invalid-feedback">Soil Type must be a valid string.</div>
-                <div class="valid-feedback">Valid Soil Type.</div>
-                <label for="editUrbanAreaProximity" class="form-label"
-                  >Urban Area Proximity</label
-                >
-                <input
-                  type="text"
-                  id="editUrbanAreaProximity"
-                  class="form-control mb-2"
-                  placeholder="Urban Area Proximity"
-                />
-                <div class="invalid-feedback">
-                  Urban Area Proximity must be a valid string.
-                </div>
-                <div class="valid-feedback">Valid Urban Area Proximity.</div>
-                <label for="editWaterSourceType" class="form-label"
-                  >Water Source Type</label
-                >
-                <input
-                  type="text"
-                  id="editWaterSourceType"
-                  class="form-control mb-2"
-                  placeholder="Water Source Type"
-                />
-                <div class="invalid-feedback">
-                  Water Source Type must be a valid string.
-                </div>
-                <div class="valid-feedback">Valid Water Source Type.</div>
-                <label for="editCropDensity" class="form-label"
-                  >Crop Density</label
-                >
-                <input
-                  type="text"
-                  id="editCropDensity"
-                  class="form-control mb-2"
-                  placeholder="Crop Density"
-                />
-                <div class="invalid-feedback">
-                  Crop Density must be a number greater than zero.
-                </div>
-                <div class="valid-feedback">Valid Crop Density.</div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-success"
-                  id="updatePlantation"
-                >
-                  Update
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+    if (!user) {
+      // Redirect to login if not authenticated
+      window.location.href = "/login";
+      return;
+    }
 
-        <!-- Delete Confirmation Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Confirm Deletion</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <p>Are you sure you want to delete this plantation?</p>
-                <input type="hidden" id="deleteId" />
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Notification Modal -->
-        <div class="modal fade" id="notificationModal" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="notificationTitle"></h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                ></button>
-              </div>
-              <div class="modal-body" id="notificationMessage"></div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-primary w-100"
-                  data-bs-dismiss="modal"
-                >
-                  OK
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+    // Define role-based navigation
+    const navItems = {
+      owner: [
+        "/home",
+        "/plant_area",
+        "/plant_management",
+        "/dashboard",
+        "/geostatic",
+        "/",
+      ],
+      farmer: ["/home", "/plant_area", "/"],
+      consultant: ["/home", "/dashboard", "/"],
+    };
 
-        <script>
-          function logout() {
-            localStorage.removeItem("user");
-            window.location.href = "/login";
-          }
-          document.addEventListener("DOMContentLoaded", function () {
-            const user = JSON.parse(localStorage.getItem("user"));
+    // Get all navigation links
+    document.querySelectorAll(".nav-link").forEach((link) => {
+      const href = link.getAttribute("href");
 
-            // if (!user) {
-            //   // Redirect to login if not authenticated
-            //   window.location.href = "/login";
-            //   return;
-            // }
+      // Hide links not allowed for the user's role
+      if (!navItems[user.role].includes(href)) {
+        link.parentElement.style.display = "none";
+      }
+    });
+  });
 
-            // Define role-based navigation
-            const navItems = {
-              owner: [
-                "/home",
-                "/plant_area",
-                "/plant_management",
-                "/dashboard",
-                "/geostatic",
-                "/",
-              ],
-              farmer: ["/home", "/plant_area", "/"],
-              consultant: ["/home", "/dashboard", "/"],
-            };
+  async function fetchPlantations() {
+    const res = await fetch("/api/plantationarea");
+    const data = await res.json();
+    const tableBody = document.getElementById("plantationTable");
+    tableBody.innerHTML = "";
 
-            // Get all navigation links
-            document.querySelectorAll(".nav-link").forEach((link) => {
-              const href = link.getAttribute("href");
+    data.forEach((plantation) => {
+      const imageSrc = plantation.image_link || "/assets/noimage.jpg";
+      tableBody.innerHTML += `
+            <tr >
+                <td>${plantation.id}</td>
+                <td><img src="${imageSrc}" class="image-preview"></td>
+                <td  onclick="goToPlantationDashboard(${plantation.id})" >${plantation.plantation_area}</td>
+                <td>${plantation.soil_type}</td>
+                <td>${plantation.urban_area_proximity}</td>
+                <td>${plantation.water_source_type}</td>
+                <td>${plantation.crop_density}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editPlantation(${plantation.id}, '${plantation.plantation_area}', '${plantation.soil_type}', '${imageSrc}', '${plantation.urban_area_proximity}', '${plantation.water_source_type}', '${plantation.crop_density}')" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete(${plantation.id})" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                </td>
+            </tr>`;
+    });
+  }
 
-              // Hide links not allowed for the user's role
-              if (!navItems[user.role].includes(href)) {
-                link.parentElement.style.display = "none";
-              }
-            });
-          });
+  function goToPlantationDashboard(plantationId) {
+    window.location.href = `/plantation-dashboard?id=${plantationId}`;
+  }
 
-          async function fetchPlantations() {
-            const res = await fetch("/api/plantationarea");
-            const data = await res.json();
-            const tableBody = document.getElementById("plantationTable");
-            tableBody.innerHTML = "";
+  function editPlantation(
+    id,
+    name,
+    soil,
+    image,
+    urban_area_proximity,
+    water_source_type,
+    crop_density
+  ) {
+    document.getElementById("editId").value = id;
+    document.getElementById("editPlantationName").value = name;
+    document.getElementById("editSoilType").value = soil;
+    document.getElementById("editImageLink").value = image;
+    document.getElementById("editImagePreview").src =
+      image || "/assets/noimage.jpg";
+    document.getElementById("editUrbanAreaProximity").value =
+      urban_area_proximity;
+    document.getElementById("editWaterSourceType").value =
+      water_source_type;
+    document.getElementById("editCropDensity").value = crop_density;
+  }
+  function validateForm(inputs) {
+    let isValid = true;
 
-            data.forEach((plantation) => {
-              const imageSrc = plantation.image_link || "/assets/noimage.jpg";
-              tableBody.innerHTML += `
-                    <tr onclick="goToPlantationDashboard(${plantation.id})">
-                        <td>${plantation.id}</td>
-                        <td><img src="${imageSrc}" class="image-preview"></td>
-                        <td>${plantation.plantation_area}</td>
-                        <td>${plantation.soil_type}</td>
-                        <td>${plantation.urban_area_proximity}</td>
-                        <td>${plantation.water_source_type}</td>
-                        <td>${plantation.crop_density}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editPlantation(${plantation.id}, '${plantation.plantation_area}', '${plantation.soil_type}', '${imageSrc}', '${plantation.urban_area_proximity}', '${plantation.water_source_type}', '${plantation.crop_density}')" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="confirmDelete(${plantation.id})" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
-                        </td>
-                    </tr>`;
-            });
-          }
+    inputs.forEach((input) => {
+      let validationFunction;
+      if (input.classList.contains("validate-url")) validationFunction = isValidURL;
+      else if (input.classList.contains("validate-number")) validationFunction = isValidNumber;
+      else if (input.classList.contains("validate-float")) validationFunction = isValidFloat;
+      else validationFunction = isValidString;
 
-          function goToPlantationDashboard(plantationId) {
-            window.location.href = `/plantation-dashboard?id=${plantationId}`;
-          }
+      if (!validationFunction(input.value)) {
+        validateInputField(input, false);
+        isValid = false;
+      } else {
+        validateInputField(input, true);
+      }
+    });
 
-          function editPlantation(
-            id,
-            name,
-            soil,
-            image,
-            urban_area_proximity,
-            water_source_type,
-            crop_density
-          ) {
-            document.getElementById("editId").value = id;
-            document.getElementById("editPlantationName").value = name;
-            document.getElementById("editSoilType").value = soil;
-            document.getElementById("editImageLink").value = image;
-            document.getElementById("editImagePreview").src =
-              image || "/assets/noimage.jpg";
-            document.getElementById("editUrbanAreaProximity").value =
-              urban_area_proximity;
-            document.getElementById("editWaterSourceType").value =
-              water_source_type;
-            document.getElementById("editCropDensity").value = crop_density;
-          }
+    return isValid;
+  }
+  function confirmDelete(id) {
+    document.getElementById("deleteId").value = id;
+  }
 
-          function confirmDelete(id) {
-            document.getElementById("deleteId").value = id;
-          }
+  // Function to show the notification modal
+  function showNotification(title, message, type = "info") {
+    document.getElementById("notificationTitle").textContent = title;
+    document.getElementById("notificationMessage").textContent =
+      message;
+    new bootstrap.Modal(
+      document.getElementById("notificationModal")
+    ).show();
+  }
 
-          // Function to show the notification modal
-          function showNotification(title, message, type = "info") {
-            document.getElementById("notificationTitle").textContent = title;
-            document.getElementById("notificationMessage").textContent =
-              message;
-            new bootstrap.Modal(
-              document.getElementById("notificationModal")
-            ).show();
-          }
+  function isValidString(value) {
+    return typeof value === "string" && value.trim().length > 0;
+  }
 
-          function isValidString(value) {
-            return typeof value === "string" && value.trim().length > 0;
-          }
+  function isValidNumber(value) {
+    return !isNaN(value) && Number(value) > 0;
+  }
 
-          function isValidNumber(value) {
-            return !isNaN(value) && Number(value) > 0;
-          }
+  function isValidFloat(value) {
+    return !isNaN(parseFloat(value)) && isFinite(value);
+  }
 
-          function isValidURL(url) {
-            return url.match(/\.(jpeg|jpg|gif|png|svg)$/) !== null;
-          }
+  function isValidURL(url) {
+    return url.match(/\.(jpeg|jpg|gif|png|svg)$/) !== null;
+  }
 
-          function validateInputField(input, isValid) {
-            const invalidFeedback = input.nextElementSibling;
-            const validFeedback = input.nextElementSibling.nextElementSibling;
+  function validateInputField(input, isValid) {
+    const invalidFeedback = input.nextElementSibling;
+    const validFeedback = input.nextElementSibling.nextElementSibling;
 
-            if (isValid) {
-              input.classList.remove("is-invalid");
-              input.classList.add("is-valid");
-              invalidFeedback.style.display = "none";
-              validFeedback.style.display = "block";
-            } else {
-              input.classList.remove("is-valid");
-              input.classList.add("is-invalid");
-              invalidFeedback.style.display = "block";
-              validFeedback.style.display = "none";
-            }
-          }
+    if (isValid) {
+      input.classList.remove("is-invalid");
+      input.classList.add("is-valid");
+      invalidFeedback.style.display = "none";
+      validFeedback.style.display = "block";
+    } else {
+      input.classList.remove("is-valid");
+      input.classList.add("is-invalid");
+      invalidFeedback.style.display = "block";
+      validFeedback.style.display = "none";
+    }
+  }
 
-          document
-            .getElementById("imageLink")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidURL(this.value));
-            });
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .getElementById("imageLink")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidURL(this.value));
+      });
 
-          document
-            .getElementById("plantationName")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("plantationName")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidString(this.value));
+      });
 
-          document
-            .getElementById("soilType")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("soilType")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidString(this.value));
+      });
 
-          document
-            .getElementById("urbanAreaProximity")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("urbanAreaProximity")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidFloat(this.value));
+      });
 
-          document
-            .getElementById("waterSourceType")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("waterSourceType")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidString(this.value));
+      });
 
-          document
-            .getElementById("cropDensity")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidNumber(this.value));
-            });
+    document
+      .getElementById("cropDensity")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidNumber(this.value));
+      });
 
-          document
-            .getElementById("editImageLink")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidURL(this.value));
-            });
+    document
+      .getElementById("editImageLink")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidURL(this.value));
+      });
 
-          document
-            .getElementById("editPlantationName")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("editPlantationName")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidString(this.value));
+      });
 
-          document
-            .getElementById("editSoilType")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("editSoilType")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidString(this.value));
+      });
 
-          document
-            .getElementById("editUrbanAreaProximity")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("editUrbanAreaProximity")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidFloat(this.value));
+      });
 
-          document
-            .getElementById("editWaterSourceType")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidString(this.value));
-            });
+    document
+      .getElementById("editWaterSourceType")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidString(this.value));
+      });
 
-          document
-            .getElementById("editCropDensity")
-            .addEventListener("input", function () {
-              validateInputField(this, isValidNumber(this.value));
-            });
-          // Validate all required fields before submitting
-          function validateInput(
-            plantation_area,
-            soil_type,
-            image_link,
-            urban_area_proximity,
-            water_source_type,
-            crop_density
-          ) {
-            if (!isValidString(plantation_area)) {
-              showNotification(
-                "Validation Error",
-                "Plantation Area must be a valid string.",
-                "error"
-              );
-              return false;
-            }
-            if (!isValidString(soil_type)) {
-              showNotification(
-                "Validation Error",
-                "Soil Type must be a valid string.",
-                "error"
-              );
-              return false;
-            }
-            if (!isValidURL(image_link)) {
-              showNotification(
-                "Validation Error",
-                "Please enter a valid image URL (JPG, PNG, GIF, SVG).",
-                "error"
-              );
-              return false;
-            }
-            if (!isValidString(urban_area_proximity)) {
-              showNotification(
-                "Validation Error",
-                "Urban Area Proximity must be a valid string.",
-                "error"
-              );
-              return false;
-            }
-            if (!isValidString(water_source_type)) {
-              showNotification(
-                "Validation Error",
-                "Water Source Type must be a valid string.",
-                "error"
-              );
-              return false;
-            }
-            if (!isValidNumber(crop_density)) {
-              showNotification(
-                "Validation Error",
-                "Crop Density must be a number greater than zero.",
-                "error"
-              );
-              return false;
-            }
-            return true;
-          }
+    document
+      .getElementById("editCropDensity")
+      ?.addEventListener("input", function () {
+        validateInputField(this, isValidNumber(this.value));
+      });
+  });
 
-          // Add Plantation
-          document
-            .getElementById("savePlantation")
-            .addEventListener("click", async () => {
-              const plantation_area =
-                document.getElementById("plantationName").value;
-              const soil_type = document.getElementById("soilType").value;
-              const image_link = document.getElementById("imageLink").value;
-              const urban_area_proximity =
-                document.getElementById("urbanAreaProximity").value;
-              const water_source_type =
-                document.getElementById("waterSourceType").value;
-              const crop_density = document.getElementById("cropDensity").value;
+  // Save Plantation
+  document.getElementById("savePlantation").addEventListener("click", async () => {
+    const inputs = document.querySelectorAll("#addModal .validate");
 
-              if (
-                !isValidString(plantation_area) ||
-                !isValidString(soil_type) ||
-                !isValidURL(image_link) ||
-                !isValidString(urban_area_proximity) ||
-                !isValidString(water_source_type) ||
-                !isValidNumber(crop_density)
-              ) {
-                showNotification(
-                  "Validation Error",
-                  "Please check your input values.",
-                  "error"
-                );
-                return;
-              }
+    if (!validateForm(inputs)) {
+      return;
+    }
 
-              await fetch("/api/plantationarea", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  plantation_area,
-                  soil_type,
-                  image_link,
-                  urban_area_proximity,
-                  water_source_type,
-                  crop_density,
-                }),
-              });
+    const plantationData = {
+      plantation_area: document.getElementById("plantationName").value,
+      soil_type: document.getElementById("soilType").value,
+      image_link: document.getElementById("imageLink").value,
+      urban_area_proximity: document.getElementById("urbanAreaProximity").value,
+      water_source_type: document.getElementById("waterSourceType").value,
+      crop_density: document.getElementById("cropDensity").value,
+    };
 
-              showNotification(
-                "Success",
-                "Plantation added successfully!",
-                "success"
-              );
-              fetchPlantations();
-              $("#addModal").modal("hide");
-            });
-          // Update Plantation
-          document
-            .getElementById("updatePlantation")
-            .addEventListener("click", async () => {
-              const id = document.getElementById("editId").value;
-              const plantation_area =
-                document.getElementById("editPlantationName").value;
-              const soil_type = document.getElementById("editSoilType").value;
-              const image_link = document.getElementById("editImageLink").value;
-              const urban_area_proximity = document.getElementById(
-                "editUrbanAreaProximity"
-              ).value;
-              const water_source_type = document.getElementById(
-                "editWaterSourceType"
-              ).value;
-              const crop_density =
-                document.getElementById("editCropDensity").value;
+    await fetch("/api/plantationarea", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(plantationData),
+    });
 
-              if (
-                !validateInput(
-                  plantation_area,
-                  soil_type,
-                  image_link,
-                  urban_area_proximity,
-                  water_source_type,
-                  crop_density
-                )
-              )
-                return;
+    showNotification("Success", "Plantation added successfully!", "success");
+    fetchPlantations();
+    $("#addModal").modal("hide");
+  });
 
-              const res = await fetch(`/api/plantationarea/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  plantation_area,
-                  soil_type,
-                  image_link,
-                  urban_area_proximity,
-                  water_source_type,
-                  crop_density,
-                }),
-              });
+  // Update Plantation
+  document.getElementById("updatePlantation").addEventListener("click", async () => {
+    const inputs = document.querySelectorAll("#editModal .validate");
 
-              if (res.ok) {
-                showNotification(
-                  "Success",
-                  "Plantation updated successfully!",
-                  "success"
-                );
-                fetchPlantations();
-                $("#editModal").modal("hide");
-              } else {
-                showNotification(
-                  "Error",
-                  "Failed to update plantation.",
-                  "error"
-                );
-              }
-            });
+    if (!validateForm(inputs)) {
+      return;
+    }
 
-          // Delete Plantation when confirmed
-          document
-            .getElementById("confirmDelete")
-            .addEventListener("click", async () => {
-              const id = document.getElementById("deleteId").value;
-              const res = await fetch(`/api/plantationarea/${id}`, {
-                method: "DELETE",
-              });
+    const id = document.getElementById("editId").value;
+    const plantationData = {
+      plantation_area: document.getElementById("editPlantationName").value,
+      soil_type: document.getElementById("editSoilType").value,
+      image_link: document.getElementById("editImageLink").value,
+      urban_area_proximity: document.getElementById("editUrbanAreaProximity").value,
+      water_source_type: document.getElementById("editWaterSourceType").value,
+      crop_density: document.getElementById("editCropDensity").value,
+    };
 
-              if (res.ok) {
-                showNotification(
-                  "Success",
-                  "Plantation deleted successfully!",
-                  "success"
-                );
-                fetchPlantations();
-                $("#deleteModal").modal("hide");
-              } else {
-                showNotification(
-                  "Error",
-                  "Failed to delete plantation.",
-                  "error"
-                );
-              }
-            });
+    const res = await fetch(`/api/plantationarea/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(plantationData),
+    });
 
-          fetchPlantations();
-        </script>
+    if (res.ok) {
+      showNotification("Success", "Plantation updated successfully!", "success");
+      fetchPlantations();
+      $("#editModal").modal("hide");
+    } else {
+      showNotification("Error", "Failed to update plantation.", "error");
+    }
+  });
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-      </body>
-    </html>
-  </head>
+  document.getElementById("confirmDelete").addEventListener("click", async () => {
+    const id = document.getElementById("deleteId").value;
+
+    const res = await fetch(`/api/plantationarea/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      showNotification("Success", "Plantation deleted successfully!", "success");
+      fetchPlantations();
+      $("#deleteModal").modal("hide");
+    } else {
+      showNotification("Error", "Failed to delete plantation.", "error");
+    }
+  });
+
+  fetchPlantations();
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
