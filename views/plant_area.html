@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Theme Styles -->
     <style>
@@ -126,7 +127,7 @@
           <button
         class="btn btn-success mb-3"
         data-bs-toggle="modal"
-        data-bs-target="#addPlantModal"
+        data-bs-target="#addModal"
       >
             Add Plantation
           </button>
@@ -434,11 +435,11 @@
           document.addEventListener("DOMContentLoaded", function () {
             const user = JSON.parse(localStorage.getItem("user"));
 
-            // if (!user) {
-            //   // Redirect to login if not authenticated
-            //   window.location.href = "/login";
-            //   return;
-            // }
+            if (!user) {
+              // Redirect to login if not authenticated
+              window.location.href = "/login";
+              return;
+            }
 
             // Define role-based navigation
             const navItems = {
@@ -663,10 +664,10 @@
               );
               return false;
             }
-            if (!isValidString(urban_area_proximity)) {
+            if (!isValidNumber(urban_area_proximity)) {
               showNotification(
                 "Validation Error",
-                "Urban Area Proximity must be a valid string.",
+                "Urban Area Proximity must be a valid number.",
                 "error"
               );
               return false;
@@ -689,6 +690,9 @@
             }
             return true;
           }
+          // addPlantModal
+      
+
 
           // Add Plantation
           document
@@ -698,27 +702,26 @@
                 document.getElementById("plantationName").value;
               const soil_type = document.getElementById("soilType").value;
               const image_link = document.getElementById("imageLink").value;
-              const urban_area_proximity =
-                document.getElementById("urbanAreaProximity").value;
+              const urban_area_proximity = Number(
+                document.getElementById("urbanAreaProximity").value
+              );
               const water_source_type =
                 document.getElementById("waterSourceType").value;
-              const crop_density = document.getElementById("cropDensity").value;
+              const crop_density = Number(
+                document.getElementById("cropDensity").value
+              );
 
               if (
-                !isValidString(plantation_area) ||
-                !isValidString(soil_type) ||
-                !isValidURL(image_link) ||
-                !isValidString(urban_area_proximity) ||
-                !isValidString(water_source_type) ||
-                !isValidNumber(crop_density)
-              ) {
-                showNotification(
-                  "Validation Error",
-                  "Please check your input values.",
-                  "error"
-                );
+                !validateInput(
+                  plantation_area,
+                  soil_type,
+                  image_link,
+                  urban_area_proximity,
+                  water_source_type,
+                  crop_density
+                )
+              )
                 return;
-              }
 
               await fetch("/api/plantationarea", {
                 method: "POST",
@@ -750,14 +753,15 @@
                 document.getElementById("editPlantationName").value;
               const soil_type = document.getElementById("editSoilType").value;
               const image_link = document.getElementById("editImageLink").value;
-              const urban_area_proximity = document.getElementById(
-                "editUrbanAreaProximity"
-              ).value;
+              const urban_area_proximity = Number(
+                document.getElementById("editUrbanAreaProximity").value
+              );
               const water_source_type = document.getElementById(
                 "editWaterSourceType"
               ).value;
-              const crop_density =
-                document.getElementById("editCropDensity").value;
+              const crop_density = Number(
+                document.getElementById("editCropDensity").value
+              );
 
               if (
                 !validateInput(
@@ -830,7 +834,6 @@
           fetchPlantations();
         </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       </body>
     </html>
   </head>

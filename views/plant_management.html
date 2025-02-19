@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Theme Styles -->
     <style>
@@ -563,8 +564,8 @@
           !name ||
           !season ||
           !stage ||
-          !pestPressure ||
-          !fertilizerUsage ||
+          !isValidNumber(pestPressure) ||
+          !isValidNumber(fertilizerUsage) ||
           !plantationId ||
           !imageLink
         ) {
@@ -602,6 +603,28 @@
         document.getElementById("plantImage").value = "";
         clearValidation();
       }
+      window.editPlant = function (
+        id,
+        name,
+        season,
+        stage,
+        image,
+        pestPressure,
+        fertilizerUsage,
+        plantationId
+      ) {
+        document.getElementById("editPlantId").value = id;
+        document.getElementById("editPlantName").value = name;
+        document.getElementById("editPlantSeason").value = season;
+        document.getElementById("editGrowthStage").value = stage;
+        document.getElementById("editPlantImage").value = image || "";
+        document.getElementById("editImagePreview").src = image
+          ? image
+          : "/assets/noimage.jpg";
+        document.getElementById("editPestPressure").value = pestPressure;
+        document.getElementById("editFertilizerUsage").value = fertilizerUsage;
+        document.getElementById("editPlantationId").value = plantationId;
+      };
 
       document
         .getElementById("savePlant")
@@ -610,9 +633,10 @@
           const plant_season = document.getElementById("plantSeason").value;
           const growth_stage = document.getElementById("growthStage").value;
           const image_link = document.getElementById("plantImage").value;
-          const pest_pressure = document.getElementById("pestPressure").value;
-          const fertilizer_usage =
-            document.getElementById("fertilizerUsage").value;
+          const pest_pressure = Number(document.getElementById("pestPressure").value);
+          const fertilizer_usage = Number(
+            document.getElementById("fertilizerUsage").value
+          );
           const plantation_id = document.getElementById("plantationId").value;
           if (
             !validatePlantInput(
@@ -645,28 +669,6 @@
           $("#addPlantModal").modal("hide");
         });
 
-      window.editPlant = function (
-        id,
-        name,
-        season,
-        stage,
-        image,
-        pestPressure,
-        fertilizerUsage,
-        plantationId
-      ) {
-        document.getElementById("editPlantId").value = id;
-        document.getElementById("editPlantName").value = name;
-        document.getElementById("editPlantSeason").value = season;
-        document.getElementById("editGrowthStage").value = stage;
-        document.getElementById("editPlantImage").value = image || "";
-        document.getElementById("editImagePreview").src = image
-          ? image
-          : "/assets/noimage.jpg";
-        document.getElementById("editPestPressure").value = pestPressure;
-        document.getElementById("editFertilizerUsage").value = fertilizerUsage;
-        document.getElementById("editPlantationId").value = plantationId;
-      };
 
       document
         .getElementById("updatePlant")
@@ -676,13 +678,11 @@
           const plant_season = document.getElementById("editPlantSeason").value;
           const growth_stage = document.getElementById("editGrowthStage").value;
           const image_link = document.getElementById("editPlantImage").value;
-          const pest_pressure =
-            document.getElementById("editPestPressure").value;
-          const fertilizer_usage = document.getElementById(
-            "editFertilizerUsage"
-          ).value;
-          const plantation_id =
-            document.getElementById("editPlantationId").value;
+          const pest_pressure = Number(document.getElementById("editPestPressure").value);
+          const fertilizer_usage = Number(
+            document.getElementById("editFertilizerUsage").value
+          );
+          const plantation_id = document.getElementById("editPlantationId").value;
           if (
             !validatePlantInput(
               plant,
@@ -944,6 +944,5 @@
           }
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
