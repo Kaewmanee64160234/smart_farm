@@ -450,7 +450,7 @@
             data.forEach((plantation) => {
               const imageSrc = plantation.image_link || "/assets/noimage.jpg";
               tableBody.innerHTML += `
-                    <tr>
+                    <tr onclick="goToPlantationDashboard(${plantation.id})">
                         <td>${plantation.id}</td>
                         <td><img src="${imageSrc}" class="image-preview"></td>
                         <td>${plantation.plantation_area}</td>
