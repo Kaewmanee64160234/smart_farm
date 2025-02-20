@@ -188,7 +188,7 @@
                   >Urban Area Proximity</label
                 >
                 <input
-                  type="text"
+                  type="number"
                   id="urbanAreaProximity"
                   class="form-control mb-2"
                   placeholder="Urban Area Proximity"
@@ -357,7 +357,7 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1">
+        <!-- <div class="modal fade" id="deleteModal" tabindex="-1">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
@@ -381,6 +381,42 @@
                   Cancel
                 </button>
                 <button type="button" class="btn btn-danger" id="confirmDelete">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  onclick="clearPlantInputs()"
+                ></button>
+              </div>
+              <div class="modal-body text-center">
+                <p>Are you sure you want to delete this plant?</p>
+                <input type="hidden" id="deletePlantId" />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary w-100"
+                  data-bs-dismiss="modal"
+                  onclick="clearPlantInputs()"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger w-100"
+                  id="confirmDeletePlant"
+                >
                   Delete
                 </button>
               </div>
@@ -418,6 +454,7 @@
             localStorage.removeItem("user");
             window.location.href = "/login";
           }
+
           document.addEventListener("DOMContentLoaded", function () {
             const user = JSON.parse(localStorage.getItem("user"));
 
@@ -547,73 +584,73 @@
 
           document
             .getElementById("imageLink")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidURL(this.value));
             });
 
           document
             .getElementById("plantationName")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("soilType")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("urbanAreaProximity")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("waterSourceType")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("cropDensity")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidNumber(this.value));
             });
 
           document
             .getElementById("editImageLink")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidURL(this.value));
             });
 
           document
             .getElementById("editPlantationName")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("editSoilType")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("editUrbanAreaProximity")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("editWaterSourceType")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidString(this.value));
             });
 
           document
             .getElementById("editCropDensity")
-            .addEventListener("input", function () {
+            ?.addEventListener("input", function () {
               validateInputField(this, isValidNumber(this.value));
             });
           // Validate all required fields before submitting
@@ -675,14 +712,11 @@
             }
             return true;
           }
-          // addPlantModal
-      
-
 
           // Add Plantation
           document
             .getElementById("savePlantation")
-            .addEventListener("click", async () => {
+            ?.addEventListener("click", async () => {
               const plantation_area =
                 document.getElementById("plantationName").value;
               const soil_type = document.getElementById("soilType").value;
@@ -732,7 +766,7 @@
           // Update Plantation
           document
             .getElementById("updatePlantation")
-            .addEventListener("click", async () => {
+            ?.addEventListener("click", async () => {
               const id = document.getElementById("editId").value;
               const plantation_area =
                 document.getElementById("editPlantationName").value;
@@ -779,6 +813,18 @@
                   "Plantation updated successfully!",
                   "success"
                 );
+                // clear text fields
+                document.getElementById("editPlantationName").value = "";
+                document.getElementById("editSoilType").value = "";
+                document.getElementById("editImageLink").value = "";
+                document.getElementById("editUrbanAreaProximity").value = "";
+                document.getElementById("editWaterSourceType").value = "";
+                document.getElementById("editCropDensity").value = "";
+                // clear validation styles
+                document.querySelectorAll(".is-valid").forEach((el) => {
+                  el.classList.remove("is-valid");
+                });
+
                 fetchPlantations();
                 $("#editModal").modal("hide");
               } else {
@@ -793,7 +839,7 @@
           // Delete Plantation when confirmed
           document
             .getElementById("confirmDelete")
-            .addEventListener("click", async () => {
+            ?.addEventListener("click", async () => {
               const id = document.getElementById("deleteId").value;
               const res = await fetch(`/api/plantationarea/${id}`, {
                 method: "DELETE",
@@ -815,6 +861,32 @@
                 );
               }
             });
+            // clear text fields
+            document.getElementById("addModal")?.addEventListener("hidden.bs.modal", function () {
+              document.getElementById("plantationName").value = "";
+              document.getElementById("soilType").value = "";
+              document.getElementById("imageLink").value = "";
+              document.getElementById("urbanAreaProximity").value = "";
+              document.getElementById("waterSourceType").value = "";
+              document.getElementById("cropDensity").value = "";
+              // clear validation styles
+              document.querySelectorAll(".is-valid").forEach((el) => {
+                el.classList.remove("is-valid");
+              });
+            });
+            document.getElementById("editModal")?.addEventListener("hidden.bs.modal", function () {
+              document.getElementById("editPlantationName").value = "";
+              document.getElementById("editSoilType").value = "";
+              document.getElementById("editImageLink").value = "";
+              document.getElementById("editUrbanAreaProximity").value = "";
+              document.getElementById("editWaterSourceType").value = "";
+              document.getElementById("editCropDensity").value = "";
+              // clear validation styles
+              document.querySelectorAll(".is-valid").forEach((el) => {
+                el.classList.remove("is-valid");
+              });
+            });
+
 
           fetchPlantations();
         </script>

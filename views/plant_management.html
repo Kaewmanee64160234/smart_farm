@@ -124,6 +124,7 @@
         class="btn btn-success mb-3"
         data-bs-toggle="modal"
         data-bs-target="#addPlantModal"
+        onclick="clearPlantInputs()"
       >
         Add Plant
       </button>
@@ -270,6 +271,12 @@
           </div>
           <div class="modal-body">
             <input type="hidden" id="editPlantId" />
+            <img
+            src=""
+            id="editImagePreview"
+            class="image-preview"
+            alt="Plant Image"
+          />
             <label for="editPlantImage" class="form-label
 
               ">Plant Image Link</label>
@@ -283,12 +290,7 @@
               Please enter a valid image URL (JPG, PNG, GIF, SVG).
             </div>
             <div class="valid-feedback">Valid image URL.</div>
-            <img
-              src=""
-              id="editImagePreview"
-              class="image-preview"
-              alt="Plant Image"
-            />
+           
             <label for="editPlantName" class="form-label">Plant Name</label>
             <input
               type="text"
@@ -382,6 +384,7 @@
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
+              onclick="clearPlantInputs()"
             ></button>
           </div>
           <div class="modal-body text-center">
@@ -393,6 +396,7 @@
               type="button"
               class="btn btn-secondary w-100"
               data-bs-dismiss="modal"
+              onclick="clearPlantInputs()"
             >
               Cancel
             </button>
@@ -417,6 +421,7 @@
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
+              onclick="clearPlantInputs()"
             ></button>
           </div>
           <div class="modal-body" id="notificationMessage"></div>
@@ -425,6 +430,7 @@
               type="button"
               class="btn btn-primary w-100"
               data-bs-dismiss="modal"
+              onclick="clearPlantInputs()"
             >
               OK
             </button>
@@ -449,47 +455,49 @@
 
           fetchPlants(); // Refresh plant list
           $("#deletePlantModal").modal("hide");
+          clearPlantInputs();
         });
 
       function logout() {
         localStorage.removeItem("user");
         window.location.href = "/login";
       }
-      document.addEventListener("DOMContentLoaded", function () {
-        const user = JSON.parse(localStorage.getItem("user"));
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   const user = JSON.parse(localStorage.getItem("user"));
 
-        if (!user || !user.role) {
-          // Redirect to login if not authenticated
-          window.location.href = "/login";
-          return;
-        }
+      //   if (!user || !user.role) {
+      //     // Redirect to login if not authenticated
+      //     window.location.href = "/login";
+      //     return;
+      //   }
 
-        // Define role-based navigation
-        const navItems = {
-          owner: [
-            "/home",
-            "/plant_area",
-            "/plant_management",
-            "/dashboard",
-            "/",
-          ],
-          farmer: ["/home", "/plant_area", "/"],
-          consultant: ["/home", "/dashboard", "/"],
-        };
+      //   // Define role-based navigation
+      //   const navItems = {
+      //     owner: [
+      //       "/home",
+      //       "/plant_area",
+      //       "/plant_management",
+      //       "/dashboard",
+      //       "/",
+      //     ],
+      //     farmer: ["/home", "/plant_area", "/"],
+      //     consultant: ["/home", "/dashboard", "/"],
+      //   };
 
-        // Get all navigation links
-        document.querySelectorAll(".nav-link").forEach((link) => {
-          const href = link.getAttribute("href");
+      //   // Get all navigation links
+      //   document.querySelectorAll(".nav-link").forEach((link) => {
+      //     const href = link.getAttribute("href");
 
-          // Hide links not allowed for the user's role
-          if (!navItems[user.role].includes(href)) {
-            link.parentElement.style.display = "none";
-          }
-        });
+      //     // Hide links not allowed for the user's role
+      //     if (!navItems[user.role].includes(href)) {
+      //       link.parentElement.style.display = "none";
+      //     }
+      //   });
 
-        fetchPlantations();
-        fetchPlants();
-      });
+      //   fetchPlantations();
+      //   fetchPlants();
+      // });
+      
       async function fetchPlants() {
         const res = await fetch("/api/plant");
         const data = await res.json();
@@ -509,8 +517,10 @@
               <td>${plant.fertilizer_usage}</td>
               <td>${plant.plantation_id}</td>
               <td>
-                <button class="btn btn-warning btn-sm">Edit</button>
-                <button class="btn btn-danger btn-sm">Delete</button>
+                <button class="btn btn-warning btn-sm" 
+                    onclick="editPlant(${plant.id}, '${plant.plant}', '${plant.plant_season}', '${plant.growth_stage}', '${imageSrc}', '${plant.pest_pressure}', '${plant.fertilizer_usage}', '${plant.plantation_id}')" 
+                    data-bs-toggle="modal" data-bs-target="#editPlantModal">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDeletePlant(${plant.id})">Delete</button>
               </td>
             </tr>`;
         });
@@ -614,98 +624,6 @@
         document.getElementById("editPlantationId").value = plantationId;
       };
 
-      document
-        .getElementById("savePlant")
-        .addEventListener("click", async () => {
-          const plant = document.getElementById("plantName").value;
-          const plant_season = document.getElementById("plantSeason").value;
-          const growth_stage = document.getElementById("growthStage").value;
-          const image_link = document.getElementById("plantImage").value;
-          const pest_pressure = Number(document.getElementById("pestPressure").value);
-          const fertilizer_usage = Number(
-            document.getElementById("fertilizerUsage").value
-          );
-          const plantation_id = document.getElementById("plantationId").value;
-          if (
-            !validatePlantInput(
-              plant,
-              plant_season,
-              growth_stage,
-              pest_pressure,
-              fertilizer_usage,
-              plantation_id,
-              image_link
-            )
-          )
-            return;
-
-          await fetch("/api/plant", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plant,
-              plant_season,
-              growth_stage,
-              image_link,
-              pest_pressure,
-              fertilizer_usage,
-              plantation_id,
-            }),
-          });
-          clearPlantInputs();
-          fetchPlants();
-          $("#addPlantModal").modal("hide");
-        });
-
-
-      document
-        .getElementById("updatePlant")
-        .addEventListener("click", async () => {
-          const id = document.getElementById("editPlantId").value;
-          const plant = document.getElementById("editPlantName").value;
-          const plant_season = document.getElementById("editPlantSeason").value;
-          const growth_stage = document.getElementById("editGrowthStage").value;
-          const image_link = document.getElementById("editPlantImage").value;
-          const pest_pressure = Number(document.getElementById("editPestPressure").value);
-          const fertilizer_usage = Number(
-            document.getElementById("editFertilizerUsage").value
-          );
-          const plantation_id = document.getElementById("editPlantationId").value;
-          if (
-            !validatePlantInput(
-              plant,
-              plant_season,
-              growth_stage,
-              pest_pressure,
-              fertilizer_usage,
-              plantation_id,
-              image_link
-            )
-          )
-            return;
-
-          await fetch(`/api/plant/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plant,
-              plant_season,
-              growth_stage,
-              image_link,
-              pest_pressure,
-              fertilizer_usage,
-              plantation_id,
-            }),
-          });
-          clearPlantInputs();
-          fetchPlants();
-          $("#editPlantModal").modal("hide");
-        });
-
-      async function deletePlant(id) {
-        await fetch(`/api/plant/${id}`, { method: "DELETE" });
-        fetchPlants();
-      }
 
       function goToPlantationDashboard(plantationId) {
         window.location.href = `/pages/plantation-dashboard.html?id=${plantationId}`;
@@ -730,19 +648,24 @@
         return url.match(/\.(jpeg|jpg|gif|png|svg)$/) !== null;
       }
 
+      function isValidNumber(value) {
+        return !isNaN(value) && value !== "";
+      }
+
       function validateInputField(input, isValid) {
         const invalidFeedback = input.nextElementSibling;
-        const validFeedback = input.nextElementSibling.nextElementSibling;
+        const validFeedback = invalidFeedback ? invalidFeedback.nextElementSibling : null;
 
         if (isValid) {
           input.classList.remove("is-invalid");
           input.classList.add("is-valid");
-          invalidFeedback.style.display = "none";
-          validFeedback.style.display = "block";
+          if (invalidFeedback) invalidFeedback.style.display = "none";
+          if (validFeedback) validFeedback.style.display = "block";
         } else {
           input.classList.remove("is-valid");
-          invalidFeedback.style.display = "block";
-          validFeedback.style.display = "none";
+          input.classList.add("is-invalid");
+          if (invalidFeedback) invalidFeedback.style.display = "block";
+          if (validFeedback) validFeedback.style.display = "none";
         }
       }
 
@@ -794,13 +717,13 @@
         document
           .getElementById("pestPressure")
           ?.addEventListener("input", function () {
-            validateInputField(this, isValidString(this.value));
+            validateInputField(this, isValidNumber(this.value));
           });
 
         document
           .getElementById("fertilizerUsage")
           ?.addEventListener("input", function () {
-            validateInputField(this, isValidString(this.value));
+            validateInputField(this, isValidNumber(this.value));
           });
 
         document
@@ -830,13 +753,13 @@
         document
           .getElementById("editPestPressure")
           ?.addEventListener("input", function () {
-            validateInputField(this, isValidString(this.value));
+            validateInputField(this, isValidNumber(this.value));
           });
 
         document
           .getElementById("editFertilizerUsage")
           ?.addEventListener("input", function () {
-            validateInputField(this, isValidString(this.value));
+            validateInputField(this, isValidNumber(this.value));
           });
       });
 
@@ -904,6 +827,7 @@
               "success"
             );
             fetchPlants();
+            clearValidation();
             $("#editPlantModal").modal("hide");
           } else {
             showNotification("Error", "Failed to update plant.", "error");
