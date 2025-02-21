@@ -345,6 +345,11 @@
           }
         );
       }
+      // if not owner or farmer, redirect to home
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user.role !== "owner" && user.role !== "farmer") {
+        window.location.href = "/home";
+      }
 
       fetchSensorData();
     </script>

@@ -661,9 +661,7 @@
         window.location.href = `/pages/plantation-dashboard.html?id=${plantationId}`;
       }
 
-      fetchPlantations();
-      fetchPlants();
-
+     
       function showNotification(title, message, type = "info") {
         document.getElementById("notificationTitle").textContent = title;
         document.getElementById("notificationMessage").textContent = message;
@@ -897,7 +895,18 @@
           } else {
             showNotification("Error", "Failed to delete plant.", "error");
           }
+
+
         });
+        
+          // if not owner cannot get in page go to home
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (user.role !== "owner") {
+            window.location.href = "/home";
+          }
+
+          fetchPlantations();
+      fetchPlants();
     </script>
   </body>
 </html>

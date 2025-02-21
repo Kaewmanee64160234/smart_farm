@@ -138,7 +138,7 @@
       <div class="container">
         <h1>Welcome to Smart Farm</h1>
         <p>Enhance farm efficiency with real-time data and AI-powered insights.</p>
-        <a href="/dashboard" class="btn btn-primary btn-lg">Explore Dashboard</a>
+        <a  class="btn btn-primary btn-lg">Explore Your Website</a>
       </div>
     </section>
 
@@ -174,7 +174,7 @@
       <div class="container">
         <h2>Optimize Your Farm with Smart Technology</h2>
         <p>Start managing your plantation with precision farming solutions.</p>
-        <a href="/plant_area" class="btn btn-light btn-lg">Get Started</a>
+        <a  class="btn btn-light btn-lg">Get Started</a>
       </div>
     </section>
 
@@ -187,12 +187,12 @@
 
     <script>
       function logout() {
-        localStorage.removeItem("user");
+        localStorage.removeItem("user_smart_farm");
         window.location.href = "/login";
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        const user = JSON.parse(localStorage.getItem("user"));
+        const user = JSON.parse(localStorage.getItem("user_smart_farm"));
         if (!user) {
           window.location.href = "/login";
           return;

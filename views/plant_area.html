@@ -858,8 +858,11 @@
                 el.classList.remove("is-valid");
               });
             });
-
-
+const user = JSON.parse(localStorage.getItem("user"));
+// if user role is not owner and farme go to home
+if (user.role !== "owner" && user.role !== "farmer") {
+  window.location.href = "/home";
+}
           fetchPlantations();
         </script>
 

@@ -238,12 +238,12 @@
       }
 
       function logout() {
-        localStorage.removeItem("user");
+        localStorage.removeItem("user_smart_farm");
         window.location.href = "/login";
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        const user = JSON.parse(localStorage.getItem("user"));
+        const user = JSON.parse(localStorage.getItem("user_smart_farm"));
 
         if (!user) {
           // Redirect to login if not authenticated
@@ -273,6 +273,10 @@
             link.parentElement.style.display = "none";
           }
         });
+        // if role not owner, and not consultant go to home
+        if (user.role !== "owner" && user.role !== "consultant") {
+          window.location.href = "/home";
+        }
 
         fetchMultiSensorData();
         fetchSensorTrends();
