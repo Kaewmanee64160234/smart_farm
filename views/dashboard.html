@@ -238,12 +238,12 @@
       }
 
       function logout() {
-        localStorage.removeItem("user_smart_farm");
+        localStorage.removeItem("user");
         window.location.href = "/login";
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        const user = JSON.parse(localStorage.getItem("user_smart_farm"));
+        const user = JSON.parse(localStorage.getItem("user"));
 
         if (!user) {
           // Redirect to login if not authenticated
