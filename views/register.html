@@ -131,7 +131,12 @@
           <h5 class="modal-title" id="notificationTitle"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body" id="notificationMessage"></div>
+        <div class="modal-body" id="notificationMessage">
+          <!-- username duplicae -->
+           <!-- add message -->
+            <p>Username already exists. Please try another username.</p>
+
+        </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">OK</button>
         </div>
@@ -171,7 +176,7 @@
               window.location.href = "/login";
             }, 2000);
           } else {
-            showNotification("Error", data.error);
+            showNotification("Error", "Username already exists. Please try another username.");
           }
         });
     </script>
