@@ -101,21 +101,34 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg">
       <div class="container">
-          <a class="navbar-brand" href="/home">Smart Farm</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav ms-auto">
-                  <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/plant_area">Plantation Area</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/plant_management">Plant Management</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/" onclick="logout()">Logout</a></li>
-              </ul>
-          </div>
+        <a class="navbar-brand" href="/home">Smart Farm</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="/plant_area">Plantation Area</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/plant_management">Plant Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/" onclick="logout()">Logout</a>
+            </li>
+          </ul>
+        </div>
       </div>
-  </nav>
+    </nav>
 
     <!-- Content -->
     <div class="container mt-5 flex-grow-1">
@@ -162,102 +175,123 @@
             ></button>
           </div>
           <div class="modal-body">
-            <!-- textfile image -->
-            <!-- lable -->
-            <label for="plantImage" class="form-label">Plant Image Link</label>
-            <input
-              type="text"
-              id="plantImage"
-              class="form-control mb-2 validate validate-url"
-              placeholder="Plant Image Link"
-            />
-            <div class="invalid-feedback">
-              Please enter a valid image URL (JPG, PNG, GIF, SVG).
+            <div class="form-group">
+              <label for="plantImage">Plant Image Link</label>
+              <input
+                type="text"
+                id="plantImage"
+                class="form-control mb-2 validate validate-url"
+                placeholder="Plant Image Link"
+              />
+              <div class="invalid-feedback">
+                Please enter a valid image URL (JPG, PNG, GIF, SVG).
+              </div>
             </div>
-            <div class="valid-feedback">Valid image URL.</div>
-            <!-- textfile image -->
-            <label for="plantName" class="form-label">Plant Name</label>
-            <input
-              type="text"
-              id="plantName"
-              class="form-control mb-2 validate"
-              placeholder="Plant Name"
-            />
-            <div class="invalid-feedback">
-              Plant Name must be a valid string.
+
+            <div class="form-group">
+              <label for="plantName">Plant Name</label>
+              <input
+                type="text"
+                id="plantName"
+                class="form-control mb-2 validate"
+                placeholder="Plant Name"
+              />
+              <div class="invalid-feedback">
+                Plant Name must be a valid string.
+              </div>
             </div>
-            <div class="valid-feedback">Valid Plant Name.</div>
-            <label for="plantSeason" class="form-label">Season</label>
-            <input
-              type="text"
-              id="plantSeason"
-              class="form-control mb-2 validate"
-              placeholder="Season"
-            />
-            <div class="invalid-feedback">Season must be a valid string.</div>
-            <div class="valid-feedback">Valid Season.</div>
-            <label for="growthStage" class="form-label">Growth Stage</label>
-            <input
-              type="text"
-              id="growthStage"
-              class="form-control validate"
-              placeholder="Growth Stage"
-            />
-            <div class="invalid-feedback">
-              Growth Stage must be a valid string.
+
+            <div class="form-group">
+              <label for="plantSeason">Season</label>
+              <input
+                type="text"
+                id="plantSeason"
+                class="form-control mb-2 validate"
+                placeholder="Season"
+              />
+              <div class="invalid-feedback">Season must be a valid string.</div>
             </div>
-            <div class="valid-feedback">Valid Growth Stage.</div>
-            <label for="pestPressure" class="form-label">Pest Pressure</label>
-            <input
-              type="number"
-              step="0.01"
-              id="pestPressure"
-              class="form-control mb-2 validate validate-float"
-              placeholder="Pest Pressure"
-            />
-            <div class="invalid-feedback">
-              Pest Pressure must be a valid float.
+
+            <div class="form-group">
+              <label for="growthStage">Growth Stage</label>
+              <input
+                type="text"
+                id="growthStage"
+                class="form-control validate"
+                placeholder="Growth Stage"
+              />
+              <div class="invalid-feedback">
+                Growth Stage must be a valid string.
+              </div>
             </div>
-            <div class="valid-feedback">Valid Pest Pressure.</div>
-            <label for="fertilizerUsage" class="form-label"
-              >Fertilizer Usage</label
-            >
-            <input
-              type="number"
-              step="0.01"
-              id="fertilizerUsage"
-              class="form-control mb-2 validate validate-float"
-              placeholder="Fertilizer Usage"
-            />
-            <div class="invalid-feedback">
-              Fertilizer Usage must be a valid float.
+
+            <div class="form-group">
+              <label for="pestPressure">Pest Pressure</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pestPressure"
+                class="form-control mb-2 validate validate-float"
+                placeholder="Pest Pressure"
+              />
+              <div class="invalid-feedback">
+                Pest Pressure must be a valid float.
+              </div>
             </div>
-            <div class="valid-feedback">Valid Fertilizer Usage.</div>
-            <label for="plantationId" class="form-label">Plantation ID</label>
-            <select
-              id="plantationId"
-              class="form-control mb-2 validate"
-            ></select>
+
+            <div class="form-group">
+              <label for="fertilizerUsage">Fertilizer Usage</label>
+              <input
+                type="number"
+                step="0.01"
+                id="fertilizerUsage"
+                class="form-control mb-2 validate validate-float"
+                placeholder="Fertilizer Usage"
+              />
+              <div class="invalid-feedback">
+                Fertilizer Usage must be a valid float.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="plantationId">Plantation ID</label>
+              <select
+                id="plantationId"
+                class="form-control mb-2 validate"
+              ></select>
+            </div>
           </div>
+
+          <!-- Buttons Row -->
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              onclick="clearPlantInputs()"
-            >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" id="savePlant">
-              Save
-            </button>
+            <div class="row w-100">
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-secondary w-100"
+                  data-bs-dismiss="modal"
+                  onclick="clearPlantInputs()"
+                >
+                  Close
+                </button>
+              </div>
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-primary w-100"
+                  id="savePlant"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
     <!-- Edit Plant Modal -->
-    <div class="modal fade" id="editPlantModal" 
-      tabindex="-1">
+    <div class="modal fade" id="editPlantModal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -271,108 +305,132 @@
           </div>
           <div class="modal-body">
             <input type="hidden" id="editPlantId" />
-            <img
-            src=""
-            id="editImagePreview"
-            class="image-preview"
-            alt="Plant Image"
-          />
-            <label for="editPlantImage" class="form-label
 
-              ">Plant Image Link</label>
-            <input
-              type="text"
-              id="editPlantImage"
-              class="form-control mb-2 validate validate-url"
-              placeholder="Plant Image Link"
-            />
-            <div class="invalid-feedback">
-              Please enter a valid image URL (JPG, PNG, GIF, SVG).
+            <div class="form-group">
+              <label for="editPlantImage">Plant Image Link</label>
+              <input
+                type="text"
+                id="editPlantImage"
+                class="form-control mb-2 validate validate-url"
+                placeholder="Plant Image Link"
+                oninput="updatePreview()"
+              />
+              <div class="invalid-feedback">
+                Please enter a valid image URL (JPG, PNG, GIF, SVG).
+              </div>
             </div>
-            <div class="valid-feedback">Valid image URL.</div>
-           
-            <label for="editPlantName" class="form-label">Plant Name</label>
-            <input
-              type="text"
-              id="editPlantName"
-              class="form-control mb-2 validate"
-              placeholder="Plant Name"
-            />
-            <div class="invalid-feedback">
-              Plant Name must be a valid string.
-            </div>
-            <div class="valid-feedback">Valid Plant Name.</div>
-            <label for="editPlantSeason" class="form-label">Season</label>
-            <input
-              type="text"
-              id="editPlantSeason"
-              class="form-control mb-2 validate"
-              placeholder="Season"
-            />
-            <div class="invalid-feedback">Season must be a valid string.</div>
-            <div class="valid-feedback">Valid Season.</div>
-            <label for="editGrowthStage" class="form-label">Growth Stage</label>
-            <input
-              type="text"
-              id="editGrowthStage"
-              class="form-control validate"
-              placeholder="Growth Stage"
-            />
-            <div class="invalid-feedback">
-              Growth Stage must be a valid string.
-            </div>
-            <div class="valid-feedback">Valid Growth Stage.</div>
-            <label for="editPestPressure" class="form-label">Pest Pressure</label>
-            <input
-              type="number"
-              step="0.01"
-              id="editPestPressure"
-              class="form-control mb-2 validate validate-float"
-              placeholder="Pest Pressure"
-            />
-            <div class="invalid-feedback">
-              Pest Pressure must be a valid float.
-            </div>
-            <div class="valid-feedback">Valid Pest Pressure.</div>
-            <label for="editFertilizerUsage" class="form-label
-              ">Fertilizer Usage</label>
-            <input
-              type="number"
-              step="0.01"
-              id="editFertilizerUsage"
-              class="form-control mb-2 validate validate-float"
-              placeholder="Fertilizer Usage"
-            />
-            <div class="invalid-feedback">
-              Fertilizer Usage must be a valid float.
-            </div>
-            <div class="valid-feedback">Valid Fertilizer Usage.</div>
-            <label for="editPlantationId" class="form-label
 
+            <div class="form-group text-center">
+              <img
+                src=""
+                id="editImagePreview"
+                class="image-preview mb-2"
+                alt="Plant Image"
+                style="max-width: 100%"
+              />
+            </div>
 
-              ">Plantation ID</label>
-            <select
-              id="editPlantationId"
-              class="form-control mb-2 validate"
-            ></select>
+            <div class="form-group">
+              <label for="editPlantName">Plant Name</label>
+              <input
+                type="text"
+                id="editPlantName"
+                class="form-control mb-2 validate"
+                placeholder="Plant Name"
+              />
+              <div class="invalid-feedback">
+                Plant Name must be a valid string.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editPlantSeason">Season</label>
+              <input
+                type="text"
+                id="editPlantSeason"
+                class="form-control mb-2 validate"
+                placeholder="Season"
+              />
+              <div class="invalid-feedback">Season must be a valid string.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="editGrowthStage">Growth Stage</label>
+              <input
+                type="text"
+                id="editGrowthStage"
+                class="form-control validate"
+                placeholder="Growth Stage"
+              />
+              <div class="invalid-feedback">
+                Growth Stage must be a valid string.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editPestPressure">Pest Pressure</label>
+              <input
+                type="number"
+                step="0.01"
+                id="editPestPressure"
+                class="form-control mb-2 validate validate-float"
+                placeholder="Pest Pressure"
+              />
+              <div class="invalid-feedback">
+                Pest Pressure must be a valid float.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editFertilizerUsage">Fertilizer Usage</label>
+              <input
+                type="number"
+                step="0.01"
+                id="editFertilizerUsage"
+                class="form-control mb-2 validate validate-float"
+                placeholder="Fertilizer Usage"
+              />
+              <div class="invalid-feedback">
+                Fertilizer Usage must be a valid float.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editPlantationId">Plantation ID</label>
+              <select
+                id="editPlantationId"
+                class="form-control mb-2 validate"
+              ></select>
+            </div>
           </div>
+
+          <!-- Buttons Row -->
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              onclick="clearPlantInputs()"
-            >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" id="updatePlant">
-              Update
-            </button>
+            <div class="row w-100">
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-secondary w-100"
+                  data-bs-dismiss="modal"
+                  onclick="clearPlantInputs()"
+                >
+                  Close
+                </button>
+              </div>
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-primary w-100"
+                  id="updatePlant"
+                >
+                  Update
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deletePlantModal" tabindex="-1">
@@ -391,26 +449,35 @@
             <p>Are you sure you want to delete this plant?</p>
             <input type="hidden" id="deletePlantId" />
           </div>
+
+          <!-- Fix: Using Bootstrap Grid for Buttons -->
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary w-100"
-              data-bs-dismiss="modal"
-              onclick="clearPlantInputs()"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger w-100"
-              id="confirmDeletePlant"
-            >
-              Delete
-            </button>
+            <div class="row w-100">
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-secondary w-100"
+                  data-bs-dismiss="modal"
+                  onclick="clearPlantInputs()"
+                >
+                  Cancel
+                </button>
+              </div>
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-danger w-100"
+                  id="confirmDeletePlant"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
     <!-- Notification Modal -->
     <div class="modal fade" id="notificationModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
@@ -462,7 +529,7 @@
         localStorage.removeItem("user");
         window.location.href = "/login";
       }
-  
+
       async function fetchPlants() {
         const res = await fetch("/api/plant");
         const data = await res.json();
@@ -470,7 +537,9 @@
         tableBody.innerHTML = "";
 
         data.forEach((plant) => {
-          const imageSrc = plant.image_link ? plant.image_link : "/assets/noimage.jpg";
+          const imageSrc = plant.image_link
+            ? plant.image_link
+            : "/assets/noimage.jpg";
           tableBody.innerHTML += `
             <tr>
               <td>${plant.id}</td>
@@ -543,8 +612,8 @@
       }
 
       function clearValidation() {
-        document.querySelectorAll('.validate').forEach(input => {
-          input.classList.remove('is-valid', 'is-invalid');
+        document.querySelectorAll(".validate").forEach((input) => {
+          input.classList.remove("is-valid", "is-invalid");
         });
       }
 
@@ -618,18 +687,29 @@
 
       function validateInputField(input, isValid) {
         const invalidFeedback = input.nextElementSibling;
-        const validFeedback = invalidFeedback ? invalidFeedback.nextElementSibling : null;
+        const validFeedback = invalidFeedback
+          ? invalidFeedback.nextElementSibling
+          : null;
+        const label = input.closest(".form-group")?.querySelector("label"); // Ensure the label is selected
 
         if (isValid) {
           input.classList.remove("is-invalid");
           input.classList.add("is-valid");
+
           if (invalidFeedback) invalidFeedback.style.display = "none";
           if (validFeedback) validFeedback.style.display = "block";
+
+          // Ensure the label is always visible
+          if (label) label.style.opacity = "1";
         } else {
           input.classList.remove("is-valid");
           input.classList.add("is-invalid");
+
           if (invalidFeedback) invalidFeedback.style.display = "block";
           if (validFeedback) validFeedback.style.display = "none";
+
+          // Ensure the label remains visible
+          if (label) label.style.opacity = "1";
         }
       }
 
