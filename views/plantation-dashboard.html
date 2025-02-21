@@ -161,44 +161,48 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = JSON.parse(localStorage.getItem("user"));
+    
+        if (!user) {
+          // Redirect to login if not authenticated
+          window.location.href = "/login";
+          return;
+        }
+    
+        // Define role-based navigation
+        const navItems = {
+          owner: ["/home", "/plant_area", "/plant_management", "/dashboard", "/"],
+          farmer: ["/home", "/plant_area", "/"],
+          consultant: ["/home", "/dashboard", "/"],
+        };
+    
+        // Get all navigation links
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          const href = link.getAttribute("href");
+    
+          // Hide links not allowed for the user's role
+          if (!navItems[user.role].includes(href)) {
+            link.parentElement.style.display = "none";
+          }
+        });
+      });
+    
       function logout() {
         localStorage.removeItem("user");
         window.location.href = "/login";
       }
-      function openDrawer() {
-      document.getElementById('drawerMenu').classList.add('open');
-      document.getElementById('menuOverlay').classList.add('active');
-    }
-
-    function closeDrawer() {
-      document.getElementById('drawerMenu').classList.remove('open');
-      document.getElementById('menuOverlay').classList.remove('active');
-    }
     
-    document.addEventListener("DOMContentLoaded", function () {
-      const user = JSON.parse(localStorage.getItem("user"));
-
-      if (!user) {
-        // Redirect to login if not authenticated
-        window.location.href = "/login";
-        return;
+      function openDrawer() {
+        document.getElementById('drawerMenu').classList.add('open');
+        document.getElementById('menuOverlay').classList.add('active');
       }
-
-      // Define role-based navigation
-      const navItems = {
-        owner: ["/home", "/plant_area", "/plant_management", "/dashboard", "/"],
-        farmer: ["/home", "/plant_area", "/"],
-        consultant: ["/home", "/dashboard", "/"],
-      };
-
-      // Hide links not allowed for the user's role
-      document.querySelectorAll(".drawer a").forEach((link) => {
-        const href = link.getAttribute("href");
-        if (!navItems[user.role].includes(href)) {
-          link.style.display = "none";
-        }
-      });
-    });
+    
+      function closeDrawer() {
+        document.getElementById('drawerMenu').classList.remove('open');
+        document.getElementById('menuOverlay').classList.remove('active');
+      }
+      
       let plantationId;
       let sensorChartInstance = null;
       let weatherChartInstance = null;

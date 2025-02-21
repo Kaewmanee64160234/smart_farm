@@ -154,6 +154,8 @@ const createRouter = (tableName) => {
             if (err) return res.status(500).json(err);
             res.json(results);
         });
+        console.log(`SELECT * FROM  ${tableName}`);
+        
     });
 
     router.post("/", (req, res) => {
