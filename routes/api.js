@@ -55,8 +55,9 @@ router.post("/login", (req, res) => {
         res.json({ message: "Login successful", user });
     });
 });
-
+// -----------graph data----------------
 // API for sensor trends
+
 router.get("/sensor-trends", (req, res) => {
     const sql = `
     SELECT 

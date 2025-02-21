@@ -123,14 +123,10 @@
           const data = await res.json();
           if (data.message === "Login successful") {
             localStorage.setItem("user", JSON.stringify(data.user));
-            if (data.user.role === "owner") {
-              window.location.href = "/plant_management";
-            } else if (data.user.role === "farmer") {
-              window.location.href = "/plant_area";
-            } else if (data.user.role === "consultant") {
-              window.location.href = "/dashboard";
-            }
-          } else {
+  
+            window.location.href = "/home";
+          } else
+           {
             alert("Invalid Credentials!");
           }
         });

@@ -462,42 +462,7 @@
         localStorage.removeItem("user");
         window.location.href = "/login";
       }
-      // document.addEventListener("DOMContentLoaded", function () {
-      //   const user = JSON.parse(localStorage.getItem("user"));
-
-      //   if (!user || !user.role) {
-      //     // Redirect to login if not authenticated
-      //     window.location.href = "/login";
-      //     return;
-      //   }
-
-      //   // Define role-based navigation
-      //   const navItems = {
-      //     owner: [
-      //       "/home",
-      //       "/plant_area",
-      //       "/plant_management",
-      //       "/dashboard",
-      //       "/",
-      //     ],
-      //     farmer: ["/home", "/plant_area", "/"],
-      //     consultant: ["/home", "/dashboard", "/"],
-      //   };
-
-      //   // Get all navigation links
-      //   document.querySelectorAll(".nav-link").forEach((link) => {
-      //     const href = link.getAttribute("href");
-
-      //     // Hide links not allowed for the user's role
-      //     if (!navItems[user.role].includes(href)) {
-      //       link.parentElement.style.display = "none";
-      //     }
-      //   });
-
-      //   fetchPlantations();
-      //   fetchPlants();
-      // });
-      
+  
       async function fetchPlants() {
         const res = await fetch("/api/plant");
         const data = await res.json();
@@ -623,7 +588,6 @@
         document.getElementById("editFertilizerUsage").value = fertilizerUsage;
         document.getElementById("editPlantationId").value = plantationId;
       };
-
 
       function goToPlantationDashboard(plantationId) {
         window.location.href = `/pages/plantation-dashboard.html?id=${plantationId}`;
