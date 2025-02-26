@@ -4,8 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smart Farm - Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
       /* Global Styling */
       body {
@@ -16,7 +22,7 @@
 
       /* Navbar */
       .navbar {
-        background-color: #40A2E3;
+        background-color: #40a2e3;
       }
       .navbar-brand {
         font-weight: bold;
@@ -30,7 +36,7 @@
       }
       .btn-logout {
         background-color: white;
-        color: #40A2E3 !important;
+        color: #40a2e3 !important;
         font-weight: bold;
         border-radius: 5px;
       }
@@ -40,7 +46,8 @@
 
       /* Hero Section */
       .hero {
-        background: url("https://cdn.vectorstock.com/i/500p/83/39/smart-farming-growing-crops-and-harvesting-plants-vector-30558339.jpg") no-repeat center center/cover;
+        background: url("https://cdn.vectorstock.com/i/500p/83/39/smart-farming-growing-crops-and-harvesting-plants-vector-30558339.jpg")
+          no-repeat center center/cover;
         height: 80vh;
         display: flex;
         justify-content: center;
@@ -59,8 +66,8 @@
         margin-bottom: 20px;
       }
       .btn-primary {
-        background-color: #40A2E3;
-        border-color: #40A2E3;
+        background-color: #40a2e3;
+        border-color: #40a2e3;
       }
       .btn-primary:hover {
         background-color: #3693d3;
@@ -84,13 +91,13 @@
       }
       .feature-box i {
         font-size: 40px;
-        color: #40A2E3;
+        color: #40a2e3;
         margin-bottom: 15px;
       }
 
       /* Call-to-Action */
       .cta {
-        background: #40A2E3;
+        background: #40a2e3;
         padding: 40px 0;
         color: white;
         text-align: center;
@@ -98,13 +105,13 @@
 
       /* Footer */
       .footer {
-        background: #40A2E3;
+        background: #40a2e3;
         color: white;
         padding: 20px 0;
         text-align: center;
       }
       .footer a {
-        color: #0D9276;
+        color: #0d9276;
         text-decoration: none;
       }
       .footer a:hover {
@@ -118,16 +125,29 @@
     <nav class="navbar navbar-expand-lg navbar-light shadow">
       <div class="container">
         <a class="navbar-brand" href="#">🌱 Smart Farm</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/plant_area">Plantation Area</a></li>
-            <li class="nav-item"><a class="nav-link" href="/plant_management">Management</a></li>
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="btn btn-logout" href="/" onclick="logout()">Logout</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="/plant_area">Plantation Area</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/plant_management">Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-logout" href="/" onclick="logout()">Logout</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -137,8 +157,12 @@
     <section class="hero">
       <div class="container">
         <h1>Welcome to Smart Farm</h1>
-        <p>Enhance farm efficiency with real-time data and AI-powered insights.</p>
-        <a  class="btn btn-primary btn-lg">Explore Your Website</a>
+        <p>
+          Enhance farm efficiency with real-time data and AI-powered insights.
+        </p>
+        <a class="btn btn-primary btn-lg" onclick="redirectBasedOnRole()"
+          >Explore Your Website</a
+        >
       </div>
     </section>
 
@@ -149,14 +173,20 @@
           <div class="feature-box">
             <i class="fas fa-seedling"></i>
             <h4>Real-Time Crop Monitoring</h4>
-            <p>Get instant updates on soil moisture, temperature, and plant health.</p>
+            <p>
+              Get instant updates on soil moisture, temperature, and plant
+              health.
+            </p>
           </div>
         </div>
         <div class="col-md-4">
           <div class="feature-box">
             <i class="fas fa-chart-line"></i>
             <h4>Data-Driven Insights</h4>
-            <p>Use AI analytics to optimize planting schedules and increase yield.</p>
+            <p>
+              Use AI analytics to optimize planting schedules and increase
+              yield.
+            </p>
           </div>
         </div>
         <div class="col-md-4">
@@ -174,7 +204,9 @@
       <div class="container">
         <h2>Optimize Your Farm with Smart Technology</h2>
         <p>Start managing your plantation with precision farming solutions.</p>
-        <a  class="btn btn-light btn-lg">Get Started</a>
+        <a class="btn btn-light btn-lg" onclick="redirectBasedOnRole()"
+          >Get Started</a
+        >
       </div>
     </section>
 
@@ -221,6 +253,22 @@
           }
         });
       });
+      function redirectBasedOnRole() {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const roleRedirects = {
+          owner: "/plant_management",
+          farmer: "/plant_area",
+          consultant: "/dashboard",
+        };
+
+        // Redirect based on role
+        window.location.href = roleRedirects[user.role] || "/home";
+      }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
