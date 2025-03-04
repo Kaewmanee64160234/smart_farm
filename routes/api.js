@@ -150,12 +150,20 @@ const createRouter = (tableName) => {
     const router = express.Router();
     
     router.get("/", (req, res) => {
-        db.query(`SELECT * FROM ??`, [tableName], (err, results) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        db.query(`SELECT COUNT(*) AS count FROM ??`, [tableName], (err, countResults) => {
             if (err) return res.status(500).json(err);
-            res.json(results);
+            const totalItems = countResults[0].count;
+            const totalPages = Math.ceil(totalItems / limit);
+
+            db.query(`SELECT * FROM ?? LIMIT ? OFFSET ?`, [tableName, limit, offset], (err, results) => {
+                if (err) return res.status(500).json(err);
+                res.json({ plants: results, totalPages });
+            });
         });
-        console.log(`SELECT * FROM  ${tableName}`);
-        
     });
 
     router.post("/", (req, res) => {

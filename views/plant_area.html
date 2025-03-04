@@ -134,8 +134,10 @@
               </thead>
               <tbody id="plantationTable"></tbody>
             </table>
-
-         
+            <nav>
+              <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+          </div>
         </div>
 
         <!-- Add Plantation Modal -->
@@ -459,13 +461,16 @@
             });
           });
 
-          async function fetchPlantations() {
-            const res = await fetch("/api/plantationarea");
+          let currentPage = 1;
+          const itemsPerPage = 10;
+
+          async function fetchPlantations(page = 1) {
+            const res = await fetch(`/api/plantationarea?page=${page}&limit=${itemsPerPage}`);
             const data = await res.json();
             const tableBody = document.getElementById("plantationTable");
             tableBody.innerHTML = "";
 
-            data.forEach((plantation) => {
+            data.plants.forEach((plantation) => {
               const imageSrc = plantation.image_link || "/assets/noimage.jpg";
               tableBody.innerHTML += `
                     <tr >
@@ -482,6 +487,8 @@
                         </td>
                     </tr>`;
             });
+
+            renderPagination(data.totalPages, page);
           }
 
           function goToPlantationDashboard(plantationId) {
@@ -863,6 +870,32 @@ const user = JSON.parse(localStorage.getItem("user"));
 if (user.role !== "owner" && user.role !== "farmer") {
   window.location.href = "/home";
 }
+
+          function renderPagination(totalPages, currentPage) {
+            const pagination = document.getElementById("pagination");
+            pagination.innerHTML = "";
+
+            const prevPage = currentPage > 1 ? currentPage - 1 : 1;
+            const nextPage = currentPage < totalPages ? currentPage + 1 : totalPages;
+
+            pagination.innerHTML += `
+              <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+                <a class="page-link" href="#" onclick="fetchPlantations(${prevPage})">Previous</a>
+              </li>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+              pagination.innerHTML += `
+                <li class="page-item ${i === currentPage ? "active" : ""}">
+                  <a class="page-link" href="#" onclick="fetchPlantations(${i})">${i}</a>
+                </li>`;
+            }
+
+            pagination.innerHTML += `
+              <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+                <a class="page-link" href="#" onclick="fetchPlantations(${nextPage})">Next</a>
+              </li>`;
+          }
+
           fetchPlantations();
         </script>
 

@@ -70,5 +70,7 @@ app.use("/api", apiRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
+    console.log(`http://localhost:${PORT}`);
+    
     console.log(`Server running on port ${PORT}`);
 });
